@@ -138,9 +138,9 @@ def _generate_comp_name(core_units: List[str], standard_comp: List[str]) -> str:
     if len(clean_targets) == 1:
         return clean_targets[0]
     elif len(clean_targets) == 2:
-        return f"{clean_targets[0]} & {clean_targets[1]}"
+        return f"{clean_targets[0]}, {clean_targets[1]}"
     else:
-        return f"{clean_targets[0]}, {clean_targets[1]} & {clean_targets[2]}"
+        return f"{clean_targets[0]}, {clean_targets[1]}, {clean_targets[2]}"
 
 def prepare_match_data(df_raw: pd.DataFrame) -> pd.DataFrame:
     df = df_raw.copy()
