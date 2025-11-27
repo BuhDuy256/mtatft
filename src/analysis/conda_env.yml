@@ -1,0 +1,28 @@
+name: tft_analysis
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # --- Core Python & Jupyter ---
+  - python=3.10
+  - jupyter
+  - notebook
+  - pip
+
+  # --- Data Science & AI ---
+  - pandas
+  - numpy
+  - scikit-learn     # Dùng cho Clustering (K-Means, DBSCAN)
+  - hdbscan
+  - matplotlib       # Vẽ biểu đồ để xem phân bố dữ liệu
+  - seaborn          # Vẽ biểu đồ đẹp hơn
+
+  # --- Database & SQL ---
+  - sqlalchemy       # ORM để Python nói chuyện với SQL
+
+  # --- Các thư viện cài qua PIP (thường mới hơn hoặc không có trên conda chính) ---
+  - pip:
+    - python-dotenv      # Đọc biến môi trường từ file .env
+    - mlxtend            # Thư viện chứa thuật toán Apriori/FP-Growth (tìm Frequent Itemsets)
+    - psycopg2-binary    # Driver cho PostgreSQL (Nếu bạn dùng Postgres)
+    # - mysql-connector-python  # Bỏ comment dòng này nếu bạn dùng MySQL/MariaDB
