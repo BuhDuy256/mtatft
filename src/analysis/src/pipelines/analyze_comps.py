@@ -14,6 +14,24 @@ except ImportError:
 from typing import List, Dict, Tuple
 import ast
 
+# Import constants
+from core.constants import (
+    HDBSCAN_MIN_CLUSTER_SIZE_RATIO,
+    HDBSCAN_MIN_SAMPLES,
+    HDBSCAN_METRIC,
+    HDBSCAN_CLUSTER_SELECTION_METHOD,
+    PCA_N_COMPONENTS,
+    PCA_RANDOM_STATE,
+    STANDARD_COMP_SIZE,
+    CORE_UNIT_THRESHOLD,
+    FLEX_UNIT_MIN_THRESHOLD,
+    FLEX_UNIT_MAX_THRESHOLD,
+    MIN_UNIT_FREQUENCY_TO_STORE,
+    MIN_STANDARD_COMP_SIZE,
+    MIN_UNIT_FREQUENCY_FOR_STANDARD,
+    MAX_TOP_COMPS
+)
+
 def analyze_top_comps(df: pd.DataFrame, n_clusters: int = 25) -> pd.DataFrame:
     print(f"\n{'='*60}")
     print(f"Starting Meta Comps Analysis with HDBSCAN")
@@ -34,19 +52,19 @@ def analyze_top_comps(df: pd.DataFrame, n_clusters: int = 25) -> pd.DataFrame:
     print(f"  Encoded {len(feature_names)} unique units")
     print(f"  Feature matrix shape: {X_binary.shape}")
     print("\n[Step 2] PCA - Reducing dimensions...")
-    n_components = min(20, X_binary.shape[1])
-    pca = PCA(n_components=n_components, random_state=42)
+    n_components = min(PCA_N_COMPONENTS, X_binary.shape[1])
+    pca = PCA(n_components=n_components, random_state=PCA_RANDOM_STATE)
     X_pca = pca.fit_transform(X_binary)
     explained_var = pca.explained_variance_ratio_.sum()
     print(f"  Reduced to {n_components} components")
     print(f"  Explained variance: {explained_var:.2%}")
     print("\n[Step 3] Running HDBSCAN Clustering...")
-    min_size = max(10, int(len(df) * 0.005))
+    min_size = max(10, int(len(df) * HDBSCAN_MIN_CLUSTER_SIZE_RATIO))
     hdbscan_model = HDBSCAN(
         min_cluster_size=min_size,
-        min_samples=5,
-        metric='euclidean',
-        cluster_selection_method='eom'
+        min_samples=HDBSCAN_MIN_SAMPLES,
+        metric=HDBSCAN_METRIC,
+        cluster_selection_method=HDBSCAN_CLUSTER_SELECTION_METHOD
     )
     if hasattr(hdbscan_model, 'fit_predict'):
         labels = hdbscan_model.fit_predict(X_pca)
@@ -73,7 +91,7 @@ def analyze_top_comps(df: pd.DataFrame, n_clusters: int = 25) -> pd.DataFrame:
         core_units, flex_units, standard_comp, unit_frequencies = _identify_key_units(
             cluster_matrix, feature_names
         )
-        if len(standard_comp) < 5:
+        if len(standard_comp) < MIN_STANDARD_COMP_SIZE:
             continue
         comp_name = _generate_comp_name(core_units, standard_comp)
         comp_results.append({
@@ -97,6 +115,11 @@ def analyze_top_comps(df: pd.DataFrame, n_clusters: int = 25) -> pd.DataFrame:
         return pd.DataFrame()
     result_df = result_df.sort_values(['play_count', 'avg_placement'], ascending=[False, True])
     result_df = result_df.reset_index(drop=True)
+    
+    if MAX_TOP_COMPS is not None and len(result_df) > MAX_TOP_COMPS:
+        print(f"  Limiting to top {MAX_TOP_COMPS} comps (from {len(result_df)} total)")
+        result_df = result_df.head(MAX_TOP_COMPS)
+    
     print(f"  Final Meta List: {len(result_df)} comps")
     print(f"\n{'='*60}")
     print("Top 5 Meta Comps Preview:")
@@ -111,20 +134,20 @@ def _identify_key_units(
 ) -> Tuple[List[str], List[str], List[str], Dict[str, float]]:
     mean_freq = cluster_matrix.mean(axis=0)
     sorted_indices = mean_freq.argsort()[::-1]
-    potential_indices = [i for i in sorted_indices if mean_freq[i] > 0.15]
-    if len(potential_indices) < 5:
-        final_standard_indices = sorted_indices[:8]
+    potential_indices = [i for i in sorted_indices if mean_freq[i] > MIN_UNIT_FREQUENCY_FOR_STANDARD]
+    if len(potential_indices) < MIN_STANDARD_COMP_SIZE:
+        final_standard_indices = sorted_indices[:STANDARD_COMP_SIZE]
     else:
-        final_standard_indices = potential_indices[:8]
+        final_standard_indices = potential_indices[:STANDARD_COMP_SIZE]
     standard_comp = [feature_names[i] for i in final_standard_indices]
-    core_indices = [i for i, freq in enumerate(mean_freq) if freq > 0.70]
+    core_indices = [i for i, freq in enumerate(mean_freq) if freq > CORE_UNIT_THRESHOLD]
     core_units = [feature_names[i] for i in core_indices]
-    flex_indices = [i for i, freq in enumerate(mean_freq) if 0.30 <= freq <= 0.70]
+    flex_indices = [i for i, freq in enumerate(mean_freq) if FLEX_UNIT_MIN_THRESHOLD <= freq <= FLEX_UNIT_MAX_THRESHOLD]
     flex_units = [feature_names[i] for i in flex_indices]
     freq_dict = {
         feature_names[i]: round(mean_freq[i], 3)
         for i in sorted_indices
-        if mean_freq[i] > 0.10
+        if mean_freq[i] > MIN_UNIT_FREQUENCY_TO_STORE
     }
     return core_units, flex_units, standard_comp, freq_dict
 

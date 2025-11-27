@@ -142,6 +142,18 @@ def save_unit_stats(engine, snapshot_id, unit_stats_df):
         conn.commit()
         print(f"Saved {len(unit_stats_df)} unit stats to database")
 
+def _calculate_tier(avg_placement: float) -> str:
+    if avg_placement <= 4.10:
+        return 'S'
+    elif avg_placement <= 4.40:
+        return 'A'
+    elif avg_placement <= 4.70:
+        return 'B'
+    elif avg_placement <= 5.00:
+        return 'C'
+    else:
+        return 'D'
+
 def save_comp_stats(engine, snapshot_id, comp_stats_df):
     with engine.connect() as conn:
         delete_comps_query = text("""
@@ -151,14 +163,17 @@ def save_comp_stats(engine, snapshot_id, comp_stats_df):
         conn.execute(delete_comps_query, {"snapshot_id": snapshot_id})
         
         for _, row in comp_stats_df.iterrows():
+            avg_placement = float(row['avg_placement'])
+            tier = _calculate_tier(avg_placement)
+            
             insert_comp_query = text("""
                 INSERT INTO meta_comps (
-                    snapshot_id, name, comp_fingerprint,
+                    snapshot_id, name, comp_fingerprint, tier,
                     avg_placement, top4_rate, win_rate, 
                     pick_rate, play_count, standard_comp
                 )
                 VALUES (
-                    :snapshot_id, :name, :comp_fingerprint,
+                    :snapshot_id, :name, :comp_fingerprint, :tier,
                     :avg_placement, :top4_rate, :win_rate,
                     :pick_rate, :play_count, :standard_comp
                 )
@@ -175,7 +190,8 @@ def save_comp_stats(engine, snapshot_id, comp_stats_df):
                 "snapshot_id": snapshot_id,
                 "name": row['comp_name'],
                 "comp_fingerprint": comp_fingerprint,
-                "avg_placement": float(row['avg_placement']),
+                "tier": tier,
+                "avg_placement": avg_placement,
                 "top4_rate": float(row['top4_rate']),
                 "win_rate": float(row['win_rate']),
                 "pick_rate": float(row['pick_rate']),
