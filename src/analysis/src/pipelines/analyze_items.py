@@ -1,5 +1,6 @@
 import pandas as pd
 from sqlalchemy import text
+from core.constants import NUM_TOP_USERS_FOR_ITEMS
 
 def analyze_items(engine, patch_version):
     print(f"\n=== Analyzing Items for Patch {patch_version} ===")
@@ -7,6 +8,7 @@ def analyze_items(engine, patch_version):
     query = text("""
         SELECT 
             mui.item_name as item_id,
+            mu.unit_id,
             p.placement,
             p.match_id,
             p.puuid
@@ -46,13 +48,24 @@ def analyze_items(engine, patch_version):
         unique_matches = group['match_id'].nunique()
         pick_rate = unique_matches / total_matches
         
+        unit_counts = group['unit_id'].value_counts()
+        top_users = [
+            {
+                'unit_id': unit_id,
+                'count': int(count),
+                'rate': round(count / play_count, 3)
+            }
+            for unit_id, count in unit_counts.head(NUM_TOP_USERS_FOR_ITEMS).items()
+        ]
+        
         item_stats.append({
             'item_id': item_id,
             'avg_placement': round(avg_placement, 2),
             'top4_rate': round(top4_rate, 4),
             'win_rate': round(win_rate, 4),
             'pick_rate': round(pick_rate, 4),
-            'play_count': play_count
+            'play_count': play_count,
+            'top_users': top_users
         })
     
     result_df = pd.DataFrame(item_stats)

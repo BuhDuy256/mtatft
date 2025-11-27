@@ -26,3 +26,5 @@ TIER_A_MAX = 4.40  # A-Tier: <= 4.40
 TIER_B_MAX = 4.70  # B-Tier: <= 4.70
 TIER_C_MAX = 5.00  # C-Tier: <= 5.00
 # D-Tier: > 5.00
+
+NUM_TOP_USERS_FOR_ITEMS = 5  # Number of top users to store per item

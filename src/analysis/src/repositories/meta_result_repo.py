@@ -76,14 +76,17 @@ def save_item_stats(engine, snapshot_id, item_stats_df):
                 INSERT INTO meta_item_stats (
                     snapshot_id, item_id, 
                     avg_placement, top4_rate, win_rate, 
-                    pick_rate, play_count
+                    pick_rate, play_count, top_users
                 )
                 VALUES (
                     :snapshot_id, :item_id,
                     :avg_placement, :top4_rate, :win_rate,
-                    :pick_rate, :play_count
+                    :pick_rate, :play_count, :top_users
                 )
             """)
+            
+            top_users_json = json.dumps(row.get('top_users', []))
+            
             conn.execute(insert_query, {
                 "snapshot_id": snapshot_id,
                 "item_id": row['item_id'],
@@ -91,7 +94,8 @@ def save_item_stats(engine, snapshot_id, item_stats_df):
                 "top4_rate": float(row['top4_rate']),
                 "win_rate": float(row['win_rate']),
                 "pick_rate": float(row['pick_rate']),
-                "play_count": int(row['play_count'])
+                "play_count": int(row['play_count']),
+                "top_users": top_users_json
             })
         
         conn.commit()
