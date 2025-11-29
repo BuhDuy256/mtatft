@@ -1,11 +1,104 @@
+/* index.css */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* --- Tailwind Theme Variables --- */
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-main);
+
+  --color-card: var(--bg-secondary);
+  --color-card-foreground: var(--text-main);
+
+  --color-popover: var(--bg-secondary);
+  --color-popover-foreground: var(--text-main);
+
+  --color-primary: var(--accent-color);
+  --color-primary-foreground: var(--text-inverse);
+
+  --color-secondary: var(--bg-tertiary);
+  --color-secondary-foreground: var(--text-main);
+
+  --color-muted: var(--bg-tertiary);
+  --color-muted-foreground: var(--text-muted);
+
+  --color-accent: var(--accent-color);
+  --color-accent-foreground: var(--text-inverse);
+
+  --color-destructive: var(--status-error);
+  --color-destructive-foreground: var(--text-main);
+
+  --color-border: var(--border-color);
+  --color-input: var(--bg-input);
+  --color-ring: var(--accent-ring);
+
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
+  --color-info: var(--status-info);
+
+  --animate-in: enter 150ms ease-out;
+  --animate-out: exit 150ms ease-in;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-switch-background: var(--bg-switch);
+
+  /* --- 1. Backgrounds --- */
+  --bg-primary: #0b0c10;
+  --bg-secondary: #15161b;
+  --bg-tertiary: #1f2128;
+  --bg-input: #15161b;
+  --bg-switch: #333333;
+
+  /* --- 2. Typography --- */
+  --font-display: "Open Sans", sans-serif;
+  --text-main: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-inverse: #0b0c10;
+
+  /* --- 3. Actions & Accents --- */
+  --accent-color: #ff9900;
+  --accent-hover: #ff8800;
+  --accent-light: #ffaa33;
+  --accent-dark: #cc7a00;
+
+  --accent-glow: rgba(255, 153, 0, 0.15);
+  --accent-ring: #ff9900;
+
+  /* --- 4. Borders & Lines --- */
+  --border-color: #333333;
+  --radius: 8px;
+
+  /* --- 5. Status Indicators --- */
+  --status-success: #00c950;
+  --status-error: #ef4444;
+  --status-warning: #ff9900;
+  --status-info: #3b82f6;
+
+  /* --- 6. Charts --- */
+  --chart-1: #ff9900;
+  --chart-2: #ffaa33;
+  --chart-3: #cc7a00;
+  --chart-4: #666666;
+  --chart-5: #999999;
+
+  /* --- 7. Sidebar --- */
+  --sidebar-bg: #0b0c10;
+  --sidebar-fg: #d1d5db;
+  --sidebar-primary: #ff9900;
+  --sidebar-primary-fg: #0b0c10;
+  --sidebar-accent: #15161b;
+  --sidebar-accent-fg: #d1d5db;
+  --sidebar-border: #333333;
+  --sidebar-ring: #ff9900;
+
+  /* --- Base Settings --- */
+  font-family: var(--font-display);
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,56 +106,174 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* Reset cơ bản */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  overflow-x: hidden;
+  font-family: "Open Sans", sans-serif;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Links */
+/* a {
+  font-weight: 500;
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s;
+} */
+a:hover {
+  color: var(--accent-hover);
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* --- Scrollbar Styling --- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Utility Classes */
+.text-accent {
+  color: var(--accent-color);
+}
+
+.bg-accent {
+  background-color: var(--accent-color);
+}
+
+.border-accent {
+  border-color: var(--accent-color);
+}
+
+.text-success {
+  color: var(--status-success);
+}
+.text-error {
+  color: var(--status-error);
+}
+.text-warning {
+  color: var(--status-warning);
+}
+.text-info {
+  color: var(--status-info);
+}
+
+/* Glow Effects */
+.glow-accent {
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.glow-accent-strong {
+  box-shadow: 0 0 25px 5px var(--accent-glow);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-glow), 0 0 15px var(--accent-glow);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
+  to {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+.animate-in {
+  animation: enter 0.2s ease-out;
+}
+.animate-out {
+  animation: exit 0.2s ease-in;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+.no-scroll {
+  overflow: hidden;
 }
