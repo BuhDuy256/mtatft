@@ -3,6 +3,11 @@ export interface Unit {
   name: string,
 }
 
+export interface Item {
+  id: string,
+  name: string,
+}
+
 export interface Stats {
   play_rate: number,
   avg_place: number,
@@ -50,4 +55,19 @@ export interface TraitStat {
 
 export interface TraitStatsResponse {
   traitStats: TraitStat[];
+}
+
+export interface UnitStat {
+  id: string;
+  name: string;
+  icon: string;
+  playRate: number;
+  place: number;
+  top4: number;
+  win: number;
+  topItems: Item[];
+}
+
+export interface UnitStatsResponse {
+  unitStats: UnitStat[];
 }

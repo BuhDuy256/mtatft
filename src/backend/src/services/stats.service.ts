@@ -92,3 +92,42 @@ export const getTraitStats = async (query: StatsQuery): Promise<TraitStatsRespon
 
   return { traitStats };
 };
+
+import { UnitStatsResponse } from '../types/stats.type';
+
+export const getUnitStats = async (query: StatsQuery): Promise<UnitStatsResponse> => {
+  const { patch } = query;
+  const rawStats = await StatsRepository.getUnitStatsByPatch(patch);
+
+  const unitStats = rawStats.map(stat => {
+    // Parse items to get top items
+    let bestItems = stat.best_items;
+    if (typeof bestItems === 'string') {
+      try {
+        bestItems = JSON.parse(bestItems);
+      } catch (e) {
+        bestItems = [];
+      }
+    }
+    const topItems = (Array.isArray(bestItems) ? bestItems : []).map((entry: any) => {
+      const itemId = entry.item;
+      return {
+        id: itemId,
+        name: itemId.split('_').pop() || itemId
+      };
+    });
+
+    return {
+      id: stat.id,
+      name: stat.name,
+      icon: stat.iconUrl,
+      playRate: Number(stat.pick_rate),
+      place: Number(stat.avg_placement),
+      top4: Number(stat.top4_rate),
+      win: Number(stat.win_rate),
+      topItems
+    };
+  });
+
+  return { unitStats };
+};

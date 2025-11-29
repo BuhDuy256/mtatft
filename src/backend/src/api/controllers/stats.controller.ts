@@ -44,3 +44,16 @@ export const getTraitStats = async (request: Request, response: Response, next: 
     next(error);
   }
 }
+
+export const getUnitStats = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+  try {
+    const query = request.query as unknown as StatsQuery;
+
+    const result = await StatsService.getUnitStats(query);
+
+    formatResponse(response, 200, result);
+  } catch (error) {
+    logger.error("StatsController", "Failed to get unit stats", error);
+    next(error);
+  }
+}

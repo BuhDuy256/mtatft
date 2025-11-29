@@ -56,3 +56,32 @@ export const getTraitStatsByPatch = async (patch: number): Promise<TraitStatRow[
     )
     .orderBy('pick_rate', 'desc');
 };
+
+export interface UnitStatRow {
+  id: string;
+  name: string;
+  iconUrl: string;
+  pick_rate: number;
+  avg_placement: number;
+  top4_rate: number;
+  win_rate: number;
+  best_items: any; // JSONB
+}
+
+export const getUnitStatsByPatch = async (patch: number): Promise<UnitStatRow[]> => {
+  return db('meta_unit_stats as mus')
+    .joinRaw('JOIN static_units as su ON LOWER(mus.unit_id) = LOWER(su.id)')
+    .join('meta_snapshots as ms', 'mus.snapshot_id', 'ms.id')
+    .where('ms.patch_version', patch.toString())
+    .select(
+      'su.id',
+      'su.name',
+      'su.iconUrl',
+      'mus.pick_rate',
+      'mus.avg_placement',
+      'mus.top4_rate',
+      'mus.win_rate',
+      'mus.best_items'
+    )
+    .orderBy('mus.pick_rate', 'desc');
+};
