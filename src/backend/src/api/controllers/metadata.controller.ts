@@ -8,9 +8,9 @@ import * as MetadataService from '../../services/metadata.service';
 
 export const getMetadata = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
   try {
-    const query = request.query as MetadataQuery;
+    const query = request.query as unknown as MetadataQuery;
 
-    const result = MetadataService.getMetadata(query);
+    const result = await MetadataService.getMetadata(query);
 
     formatResponse(response, 200, result);
   } catch (error) {

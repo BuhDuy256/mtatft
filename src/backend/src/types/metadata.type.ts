@@ -1,4 +1,5 @@
 export interface UnitMetadata {
+  id: string,
   name: string,
   cost: number,
   traits: string[],
@@ -6,11 +7,13 @@ export interface UnitMetadata {
 };
 
 export interface TraitMetadata {
+  id: string,
   name: string,
   image_url: string,
 };
 
 export interface ItemMetadata {
+  id: string,
   name: string,
   image_url: string,
 };

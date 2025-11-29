@@ -19,6 +19,7 @@ export const getMetadata = async (query: MetadataQuery): Promise<Metadata> => {
   for (const row of unitsWithTraits) {
     if (!unitsMap.has(row.id)) {
       unitsMap.set(row.id, {
+        id: row.id,
         name: row.name,
         cost: row.cost,
         traits: [],
@@ -32,17 +33,19 @@ export const getMetadata = async (query: MetadataQuery): Promise<Metadata> => {
   }
 
   const formattedTraits: TraitMetadata[] = traits.map((trait: any) => ({
+    id: trait.id,
     name: trait.name,
     image_url: trait.iconUrl
   }));
 
   const formattedItems: ItemMetadata[] = items.map((item: any) => ({
+    id: item.id,
     name: item.name,
     image_url: item.iconUrl
   }));
 
   return {
-    season: season || 1, // Default value if not provided
+    season: season,
     units: Array.from(unitsMap.values()),
     traits: formattedTraits,
     items: formattedItems

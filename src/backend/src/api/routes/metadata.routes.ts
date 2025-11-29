@@ -5,6 +5,6 @@ import * as MetadataController from '../controllers/metadata.controller';
 
 const router = Router();
 
-router.use('/', validate(metadataQuerySchema, 'query'), MetadataController.getMetadata);
+router.get('/', validate(metadataQuerySchema, 'query'), MetadataController.getMetadata);
 
 export default router;

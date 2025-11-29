@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError, ValidationError } from '../errors';
 import { ZodError } from 'zod';
+import { envConfig } from '../config/env.config';
 
 export const errorHandler = (
   error: Error,
@@ -48,7 +49,7 @@ export const errorHandler = (
   return res.status(500).json({
     success: false,
     error: 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && {
+    ...(envConfig.NODE_ENV === 'development' && {
       message: error.message,
       stack: error.stack
     }),
