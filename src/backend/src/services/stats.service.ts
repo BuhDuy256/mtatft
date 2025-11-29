@@ -28,8 +28,8 @@ export const getTopComps = async (query: StatsQuery): Promise<TopComps> => {
       id: comp.id,
       name: comp.name,
       tier: comp.tier,
-      coreUnits,
-      flexUnits,
+      coreUnit: coreUnits,
+      flexUnit: flexUnits,
       stats: {
         play_rate: comp.pick_rate,
         avg_place: comp.avg_placement,
@@ -40,4 +40,36 @@ export const getTopComps = async (query: StatsQuery): Promise<TopComps> => {
   });
 
   return { topComps };
+};
+
+import * as StatsRepository from '../repositories/stats.repository';
+import { ItemStatsResponse } from '../types/stats.type';
+
+export const getItemStats = async (query: StatsQuery): Promise<ItemStatsResponse> => {
+  const { patch } = query;
+  const rawStats = await StatsRepository.getItemStatsByPatch(patch);
+
+  const itemStats = rawStats.map(stat => {
+    // Parse top users to get unit IDs
+    const topUsers = (stat.top_users || []).map((user: any) => {
+      const unitId = user.unit_id;
+      return {
+        id: unitId,
+        name: unitId.split('_')[1] || unitId
+      };
+    });
+
+    return {
+      id: stat.id,
+      name: stat.name,
+      icon: stat.iconUrl,
+      playRate: stat.pick_rate,
+      place: stat.avg_placement,
+      top4: stat.top4_rate,
+      win: stat.win_rate,
+      topUsers
+    };
+  });
+
+  return { itemStats };
 };

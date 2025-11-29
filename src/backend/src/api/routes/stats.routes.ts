@@ -6,5 +6,6 @@ import { statsQuerySchema } from '../schemas/stats.schema';
 const router = Router();
 
 router.get('/top-comps', validate(statsQuerySchema, 'query'), StatsController.getTopComps);
+router.get('/items', validate(statsQuerySchema, 'query'), StatsController.getItemStats);
 
 export default router;
