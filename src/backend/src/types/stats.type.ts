@@ -37,3 +37,17 @@ export interface ItemStat {
 export interface ItemStatsResponse {
   itemStats: ItemStat[];
 }
+
+export interface TraitStat {
+  id: string;
+  name: string;
+  icon: string;
+  playRate: number;
+  place: number;
+  top4: number;
+  win: number;
+}
+
+export interface TraitStatsResponse {
+  traitStats: TraitStat[];
+}

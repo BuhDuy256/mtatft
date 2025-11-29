@@ -7,5 +7,6 @@ const router = Router();
 
 router.get('/top-comps', validate(statsQuerySchema, 'query'), StatsController.getTopComps);
 router.get('/items', validate(statsQuerySchema, 'query'), StatsController.getItemStats);
+router.get('/traits', validate(statsQuerySchema, 'query'), StatsController.getTraitStats);
 
 export default router;

@@ -73,3 +73,22 @@ export const getItemStats = async (query: StatsQuery): Promise<ItemStatsResponse
 
   return { itemStats };
 };
+
+import { TraitStatsResponse } from '../types/stats.type';
+
+export const getTraitStats = async (query: StatsQuery): Promise<TraitStatsResponse> => {
+  const { patch } = query;
+  const rawStats = await StatsRepository.getTraitStatsByPatch(patch);
+
+  const traitStats = rawStats.map(stat => ({
+    id: stat.id,
+    name: stat.name,
+    icon: stat.iconUrl,
+    playRate: Number(stat.pick_rate),
+    place: Number(stat.avg_placement),
+    top4: Number(stat.top4_rate),
+    win: Number(stat.win_rate)
+  }));
+
+  return { traitStats };
+};
