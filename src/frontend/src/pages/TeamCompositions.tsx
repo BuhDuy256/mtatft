@@ -361,7 +361,7 @@ const teamComps = [
   },
 ];
 
-export default function App() {
+export default function TeamCompositions() {
   return (
     <MainLayout>
       <main className="main-content flex-1 w-full max-w-[1200px] mx-auto px-4 py-8">
