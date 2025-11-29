@@ -21,53 +21,48 @@ export interface TopComp {
   tier: string,
   coreUnit: Unit[],
   flexUnit: Unit[],
-  stats: Stats
+  stats: Stats,
 }
 
-export interface TopComps {
-  topComps: TopComp[]
-};
+export interface TopCompsResponse {
+  patch: number,
+  topComps: TopComp[],
+}
 
 export interface ItemStat {
-  id: string;
-  name: string;
-  icon: string;
-  playRate: number;
-  place: number;
-  top4: number;
-  win: number;
-  topUsers: Unit[];
+  id: string,
+  name: string,
+  icon: string,
+  stats: Stats,
+  topUsers: Unit[],
 }
 
 export interface ItemStatsResponse {
-  itemStats: ItemStat[];
+  patch: number,
+  itemStats: ItemStat[],
 }
 
 export interface TraitStat {
-  id: string;
-  name: string;
-  icon: string;
-  playRate: number;
-  place: number;
-  top4: number;
-  win: number;
+  id: string,
+  name: string,
+  icon: string,
+  stats: Stats,
 }
 
 export interface TraitStatsResponse {
-  traitStats: TraitStat[];
+  patch: number,
+  traitStats: TraitStat[],
 }
 
 export interface UnitStat {
-  id: string;
-  name: string;
-  icon: string;
-  playRate: number;
-  place: number;
-  top4: number;
-  win: number;
-  topItems: Item[];
+  id: string,
+  name: string,
+  icon: string,
+  stats: Stats,
+  topItems: Item[],
 }
 
 export interface UnitStatsResponse {
-  unitStats: UnitStat[];
+  patch: number,
+  unitStats: UnitStat[],
 }

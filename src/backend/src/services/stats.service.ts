@@ -1,8 +1,9 @@
 import * as CompRepository from '../repositories/comp.repository';
+import * as StatsRepository from '../repositories/stats.repository';
 import { StatsQuery } from '../api/schemas/stats.schema';
-import { TopComps } from '../types/stats.type';
+import { TopCompsResponse, ItemStatsResponse, TraitStatsResponse, UnitStatsResponse } from '../types/stats.type';
 
-export const getTopComps = async (query: StatsQuery): Promise<TopComps> => {
+export const getTopComps = async (query: StatsQuery): Promise<TopCompsResponse> => {
   const { patch } = query;
 
   const rawComps = await CompRepository.getTopCompsByPatch(patch);
@@ -39,11 +40,8 @@ export const getTopComps = async (query: StatsQuery): Promise<TopComps> => {
     };
   });
 
-  return { topComps };
+  return { patch, topComps };
 };
-
-import * as StatsRepository from '../repositories/stats.repository';
-import { ItemStatsResponse } from '../types/stats.type';
 
 export const getItemStats = async (query: StatsQuery): Promise<ItemStatsResponse> => {
   const { patch } = query;
@@ -63,18 +61,18 @@ export const getItemStats = async (query: StatsQuery): Promise<ItemStatsResponse
       id: stat.id,
       name: stat.name,
       icon: stat.iconUrl,
-      playRate: stat.pick_rate,
-      place: stat.avg_placement,
-      top4: stat.top4_rate,
-      win: stat.win_rate,
+      stats: {
+        play_rate: Number(stat.pick_rate),
+        avg_place: Number(stat.avg_placement),
+        top4_rate: Number(stat.top4_rate),
+        win_rate: Number(stat.win_rate)
+      },
       topUsers
     };
   });
 
-  return { itemStats };
+  return { patch, itemStats };
 };
-
-import { TraitStatsResponse } from '../types/stats.type';
 
 export const getTraitStats = async (query: StatsQuery): Promise<TraitStatsResponse> => {
   const { patch } = query;
@@ -84,16 +82,16 @@ export const getTraitStats = async (query: StatsQuery): Promise<TraitStatsRespon
     id: stat.id,
     name: stat.name,
     icon: stat.iconUrl,
-    playRate: Number(stat.pick_rate),
-    place: Number(stat.avg_placement),
-    top4: Number(stat.top4_rate),
-    win: Number(stat.win_rate)
+    stats: {
+      play_rate: Number(stat.pick_rate),
+      avg_place: Number(stat.avg_placement),
+      top4_rate: Number(stat.top4_rate),
+      win_rate: Number(stat.win_rate)
+    }
   }));
 
-  return { traitStats };
+  return { patch, traitStats };
 };
-
-import { UnitStatsResponse } from '../types/stats.type';
 
 export const getUnitStats = async (query: StatsQuery): Promise<UnitStatsResponse> => {
   const { patch } = query;
@@ -121,13 +119,15 @@ export const getUnitStats = async (query: StatsQuery): Promise<UnitStatsResponse
       id: stat.id,
       name: stat.name,
       icon: stat.iconUrl,
-      playRate: Number(stat.pick_rate),
-      place: Number(stat.avg_placement),
-      top4: Number(stat.top4_rate),
-      win: Number(stat.win_rate),
+      stats: {
+        play_rate: Number(stat.pick_rate),
+        avg_place: Number(stat.avg_placement),
+        top4_rate: Number(stat.top4_rate),
+        win_rate: Number(stat.win_rate)
+      },
       topItems
     };
   });
 
-  return { unitStats };
+  return { patch, unitStats };
 };
