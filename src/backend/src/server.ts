@@ -1,4 +1,5 @@
 import express from "express";
+import cors from 'cors';
 import { envConfig } from "./config/env.config";
 
 import metadataRouter from "./api/routes/metadata.routes";
@@ -8,6 +9,7 @@ import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 const app = express();
 const PORT = envConfig.PORT;
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/metadata", metadataRouter);
