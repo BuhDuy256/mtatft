@@ -83,3 +83,115 @@ function MyComponent() {
   return <div>Season {data?.season}</div>;
 }
 ```
+
+---
+
+## [2025-11-30] - Top Compositions Data Fetching Implementation
+
+**Thời gian:** 3h | **Trạng thái:** ✅ Hoàn thành
+
+### 1. Tính năng mới (What I did)
+
+- [x] Tạo TypeScript interfaces cho stats data (`src/types/stats.ts`)
+- [x] Implement stats service layer với API call (`src/services/stats.service.ts`)
+- [x] Update `TeamCompositions.tsx` để fetch data từ backend API
+- [x] Implement merge logic để enrich API data với metadata
+- [x] Thêm loading/error screens cho TeamCompositions page
+- [x] Fix API response parsing với `formatResponse` wrapper
+- [x] Fix case-insensitive ID matching cho unit lookup
+
+### 2. Quyết định Kỹ thuật (Key Decisions)
+
+- **Data Merging Strategy:**
+
+  - _Lựa chọn:_ Merge data trong component sử dụng `useMemo`
+  - _Lý do:_ API trả về `TopComp` data với minimal info (chỉ có unit ID, name). Cần merge với `metadata` để lấy thêm `image_url`, `cost` và tính `borderColor`. `useMemo` đảm bảo merge chỉ chạy lại khi `rawComps` hoặc `metadata` thay đổi, tránh re-calculation không cần thiết.
+
+- **Cost-based Border Colors:**
+
+  - _Lựa chọn:_ Tạo helper function `getCostBorderColor()` để map cost → color
+  - _Lý do:_ TFT có quy ước màu border theo cost tier (1-cost: gray, 2-3-cost: blue, 4-cost: purple, 5-cost: gold). Centralize logic này giúp dễ maintain và consistent.
+
+- **API Response Unwrapping:**
+
+  - _Lựa chọn:_ Services unwrap `ApiResponse<T>` wrapper trước khi return data
+  - _Lý do:_ Backend dùng `formatResponse()` utility, tất cả responses đều có format `{ success, data, message }`. Services phải extract `data` field trước khi return về component.
+
+- **Case-insensitive ID Matching:**
+  - _Lựa chọn:_ Convert cả 2 IDs về lowercase trước khi compare
+  - _Lý do:_ Database có thể lưu ID khác case (ví dụ: `TFT15_Rumble` vs `tft15_rumble`). `.toLowerCase()` đảm bảo matching luôn thành công bất kể case.
+
+### 3. Vấn đề & Giải pháp (Challenges & Fixes)
+
+- **Lỗi:** `Cannot read properties of undefined (reading 'length')`
+
+  - _Nguyên nhân:_ `rawComps.length` được gọi khi `rawComps` có thể là `undefined` nếu API response không đúng format.
+  - _Giải pháp:_ Thêm null check: `if (!metadata || !rawComps || rawComps.length === 0) return []`
+
+- **Lỗi:** API response parsing sai, data không hiển thị
+
+  - _Nguyên nhân:_ Service expect direct `TopCompsResponse`, nhưng backend wrap trong `{ success, data }` structure.
+  - _Giải pháp:_
+    ```typescript
+    const apiResponse: ApiResponse<TopCompsResponse> = await response.json();
+    return apiResponse.data; // Extract data field
+    ```
+
+- **Lỗi:** Unit images không hiển thị cho một số champions
+
+  - _Nguyên nhân:_ Metadata có ID `TFT15_Rumble` nhưng API trả về `tft15_rumble` → strict equality check fail.
+  - _Giải pháp:_ Case-insensitive matching:
+    ```typescript
+    metadata.units.find((m) => m.id.toLowerCase() === u.id.toLowerCase());
+    ```
+
+- **Lỗi:** Stats fields undefined gây crash khi call `.toFixed()`
+  - _Nguyên nhân:_ Optional chaining thiếu khi access nested stats fields.
+  - _Giải pháp:_ Use optional chaining + fallback:
+    ```typescript
+    playRate: comp.stats?.play_rate?.toFixed(1) || "0.0";
+    ```
+
+### 4. Bài học rút ra (Learnings)
+
+- **API Response Structure Awareness**: Luôn kiểm tra response structure từ backend. Nếu backend dùng response wrapper utility, frontend phải unwrap đúng cách.
+- **Case-sensitivity trong Database**: IDs trong database không đảm bảo consistent case. Nên normalize (lowercase/uppercase) khi compare.
+- **Defensive Programming**: Khi map/transform data, luôn handle trường hợp array/object có thể undefined bằng `|| []`, `?.`, và fallback values.
+- **useMemo for Performance**: Khi merge/transform large datasets, dùng `useMemo` với proper dependencies để tránh re-calculation mỗi render.
+
+---
+
+## Data Flow Diagram
+
+```
+TeamCompositions Component
+    │
+    ├─► useMetadata() ──► metadata (units, traits, items)
+    │
+    ├─► useEffect()
+    │     └─► fetchTopComps() ──► Backend API
+    │           └─► response.data.topComps ──► setRawComps()
+    │
+    └─► useMemo()
+          ├─► rawComps (from API)
+          ├─► metadata (from Context)
+          └─► Merge Logic
+                ├─► Find unit details by ID (case-insensitive)
+                ├─► Add image_url, cost, borderColor
+                └─► Format stats with .toFixed()
+                      │
+                      └─► enrichedComps ──► TeamCompCard
+```
+
+## Files Modified
+
+```
+src/frontend/src/
+├── types/
+│   └── stats.ts                    # [NEW] Stats interfaces
+├── services/
+│   ├── stats.service.ts            # [NEW] Fetch top comps API
+│   └── metadata.service.ts         # [MODIFIED] Added ApiResponse unwrapping
+└── pages/
+    └── TeamCompositions.tsx        # [MODIFIED] Data fetching + merge logic
+```
