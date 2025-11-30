@@ -20,7 +20,6 @@ function App() {
     );
   }
 
-  // Show error screen if metadata fetch failed
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-900 to-slate-900">
