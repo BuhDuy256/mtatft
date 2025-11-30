@@ -371,6 +371,7 @@ src/frontend/src/
 
   - _Vấn đề:_ Cần merge 2 loại metadata khác nhau (items + units) trong cùng một enrichment flow.
   - _Giải pháp:_ Nested map operations:
+
     ```typescript
     const enrichedItems = rawItems.map((item) => {
       // 1. Item metadata
@@ -447,4 +448,143 @@ src/frontend/src/
 │   └── Items.tsx                   # [MODIFIED] Data fetching + dual metadata merge
 └── components/
     └── ItemsTable.tsx              # [REWRITTEN] Clean component, removed TrendIcon, accepts items prop
+```
+
+---
+
+## [2025-11-30] - Traits Stats Data Fetching Implementation
+
+**Thời gian:** 1.5h | **Trạng thái:** ✅ Hoàn thành
+
+### 1. Tính năng mới (What I did)
+
+- [x] Thêm `fetchTraitStats()` vào `stats.service.ts`
+- [x] Update `Traits.tsx` để fetch data từ backend API
+- [x] Implement merge logic để enrich trait data với **trait metadata** (image_url)
+- [x] Refactor toàn bộ `TraitsTable` component
+- [x] Replace hardcoded SVG icons (13 components) → Dynamic images từ metadata
+- [x] Remove `number` prop (không cần hiển thị số thứ tự)
+- [x] Thêm loading/error screens cho Traits page
+- [x] Fix import path issues
+
+### 2. Quyết định Kỹ thuật (Key Decisions)
+
+- **Replace Hardcoded SVG Icons:**
+
+  - _Lựa chọn:_ Thay thế 13 hardcoded SVG icon components (MentorIcon, TheChampIcon, etc.) bằng `ImageWithFallback` component với ảnh dynamic
+  - _Lý do:_
+    - **Maintainability**: Hardcoded SVG khó maintain, phải update code mỗi khi thêm trait mới
+    - **Data-driven**: Ảnh trait nên đến từ metadata giống như units/items, consistent với architecture
+    - **Scalability**: Database có thể thêm traits mới mà không cần code changes
+    - **File size**: 300+ lines SVG components → Clean component ~200 lines
+
+- **Icon-only Metadata Merge:**
+
+  - _Lựa chọn:_ Chỉ merge `image_url` từ trait metadata, không cần fields khác
+  - _Lý do:_ Traits không có topUsers hay nested data phức tạp như Items. Chỉ cần icon/name/stats → Simple merge pattern.
+
+- **Remove Number Display:**
+
+  - _Lựa chọn:_ Bỏ display số thứ tự (1, 2, 3...) trước tên trait
+  - _Lý do:_ UI có icon rồi, số thứ tự redundant và không thêm information value. Clean visual hierarchy.
+
+- **Component Location Awareness:**
+  - _Lựa chọn:_ Import `ImageWithFallback` từ đúng location (`./figma/ImageWithFallback`)
+  - _Lý do:_ Tránh import errors. Cần understand file structure để import đúng shared components.
+
+### 3. Vấn đề & Giải pháp (Challenges & Fixes)
+
+- **13 Hardcoded SVG Icon Components:**
+
+  - _Vấn đề:_ Component có 13 functions render SVG icons (MentorIcon, TheChampIcon, ProtectorIcon, BastionIcon, RosemothIcon, StanceMasterIcon, JuggernautIcon, RogueCadreIcon, DuelistIcon, LuchadorIcon, StrategistIcon, WrathIcon, SoulFighterIcon) - tổng ~300 lines code.
+  - _Giải pháp:_
+
+    ```tsx
+    // Before: Hardcoded SVG
+    function MentorIcon() {
+      return <div><svg>...paths...</svg></div>;
+    }
+    <TraitRow icon={<MentorIcon />} />
+
+    // After: Dynamic Image
+    <ImageWithFallback
+      src={trait.icon} // From metadata
+      alt={trait.name}
+    />
+    ```
+
+- **Import Path Resolution:**
+
+  - _Vấn đề:_ `ImageWithFallback` component không ở current directory. Thử `"./ImageWithFallback"` → error, thử `"../shared/..."` → error.
+  - _Giải pháp:_
+
+    ```typescript
+    // Step 1: Find actual location
+    find_by_name("ImageWithFallback*");
+    // → components/figma/ImageWithFallback.tsx
+
+    // Step 2: Correct import
+    import { ImageWithFallback } from "./figma/ImageWithFallback";
+    ```
+
+- **Unused React Import:**
+  - _Vấn đề:_ TSX file có `import React from "react"` nhưng không dùng (modern JSX transform không cần).
+  - _Giải pháp:_ Remove import để clean up lint warnings.
+
+### 4. Bài học rút ra (Learnings)
+
+- **Hardcoded vs Data-Driven**: Hardcoded SVG icons có vẻ simple ban đầu nhưng không scale. Data-driven approach (metadata) linh hoạt hơn nhiều, đặc biệt khi data có thể thay đổi.
+- **Component File Structure**: Cần hiểu rõ file structure của project để import đúng shared components. Không nên assume location, nên dùng `find_by_name` để verify.
+- **Visual Simplification**: Đôi khi less is more. Bỏ số thứ tự khiến UI sạch hơn vì icon đã đủ để identify trait.
+- **Refactor Impact**: Replacing 300 lines hardcoded SVG → ~50 lines dynamic image loading là significant improvement về maintainability.
+
+---
+
+## Code Comparison
+
+### Before (Hardcoded SVG Icons):
+
+```tsx
+// 13 icon components (~300 lines)
+function MentorIcon() { return <div><svg>...</svg></div>; }
+function TheChampIcon() { return <div><svg>...</svg></div>; }
+// ... 11 more
+
+// Hardcoded rows
+<TraitRow icon={<MentorIcon />} number={1} name="Mentor" ... />
+<TraitRow icon={<TheChampIcon />} number={2} name="The Champ" ... />
+```
+
+### After (Dynamic Images from Metadata):
+
+```tsx
+// No hardcoded icons!
+
+// Fetch from API + merge metadata
+const enrichedTraits = rawTraits.map((trait) => ({
+  ...trait,
+  icon: metadata.traits.find(...)?.image_url
+}));
+
+// Dynamic rendering
+{traits.map((trait, index) => (
+  <TraitRow
+    key={trait.id}
+    name={trait.name}
+    icon={trait.icon} // ← Dynamic image URL
+    ...
+  />
+))}
+```
+
+## Files Modified
+
+```
+src/frontend/src/
+├── services/
+│   └── stats.service.ts            # [MODIFIED] Added fetchTraitStats()
+├── pages/
+│   └── Traits.tsx                  # [MODIFIED] Data fetching + metadata merge
+└── components/
+    └── TraitsTable.tsx             # [REFACTORED] Removed 13 SVG icons, uses dynamic images
 ```
