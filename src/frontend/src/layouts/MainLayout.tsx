@@ -1,6 +1,5 @@
-import React from "react";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+import Header from "../components/common/Header";
+import { Footer } from "../components/common/Footer";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -9,7 +8,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div
-      className="main-layout min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col items-center justify-center"
       style={{ backgroundColor: "#F0EAD6" }}
     >
       <Header />
