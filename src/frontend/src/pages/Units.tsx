@@ -107,13 +107,13 @@ const tierData = [
 export default function Units() {
   return (
     <MainLayout>
-      <main className="flex-1 w-full max-w-[1000px] mx-auto px-4 py-8">
+      <div className="flex-1 w-full max-w-[1000px] mx-auto px-4 py-8">
         <div className="space-y-6">
           {tierData.map((tier) => (
             <TierSection key={tier.tier} tier={tier} />
           ))}
         </div>
-      </main>
+      </div>
     </MainLayout>
   );
 }

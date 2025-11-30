@@ -8,12 +8,12 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center"
+      className="min-h-screen flex flex-col"
       style={{ backgroundColor: "#F0EAD6" }}
     >
       <Header />
 
-      {children}
+      <main className="flex-1 w-full">{children}</main>
 
       <Footer />
     </div>

@@ -119,12 +119,12 @@ const itemsData = [
 export default function Items() {
   return (
     <MainLayout>
-      <main className="flex-1 w-full max-w-[1024px] mx-auto px-4 py-8">
+      <div className="flex-1 w-full max-w-[1024px] mx-auto px-4 py-8">
         <div className="rounded-lg overflow-hidden">
           <ItemsFilter />
           <ItemsTable items={itemsData} />
         </div>
-      </main>
+      </div>
     </MainLayout>
   );
 }

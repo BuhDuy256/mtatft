@@ -364,7 +364,7 @@ const teamComps = [
 export default function TeamCompositions() {
   return (
     <MainLayout>
-      <main className="main-content flex-1 w-full max-w-[1200px] mx-auto px-4 py-8">
+      <div className="main-content flex-1 w-full max-w-[1200px] mx-auto px-4 py-8">
         <FilterSection />
 
         <div className="mt-6 flex flex-col items-center gap-4">
@@ -372,7 +372,7 @@ export default function TeamCompositions() {
             <TeamCompCard key={comp.id} comp={comp} />
           ))}
         </div>
-      </main>
+      </div>
     </MainLayout>
   );
 }
