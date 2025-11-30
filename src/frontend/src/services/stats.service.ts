@@ -1,4 +1,4 @@
-import type { TopCompsResponse, UnitStatsResponse } from "../types/stats";
+import type { TopCompsResponse, UnitStatsResponse, ItemStatsResponse } from "../types/stats";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
@@ -55,5 +55,30 @@ export async function fetchUnitStats(): Promise<UnitStatsResponse> {
       throw new Error(`Error fetching unit stats: ${error.message}`);
     }
     throw new Error("Unknown error occurred while fetching unit stats");
+  }
+}
+
+export async function fetchItemStats(): Promise<ItemStatsResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/stats/items`);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch item stats: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const apiResponse: ApiResponse<ItemStatsResponse> = await response.json();
+
+    if (!apiResponse.success || !apiResponse.data) {
+      throw new Error("Invalid API response structure");
+    }
+
+    return apiResponse.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error fetching item stats: ${error.message}`);
+    }
+    throw new Error("Unknown error occurred while fetching item stats");
   }
 }

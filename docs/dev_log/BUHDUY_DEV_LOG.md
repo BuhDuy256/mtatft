@@ -313,3 +313,138 @@ src/frontend/src/
     ├── TierSection.tsx             # [MODIFIED] Updated Unit interface
     └── UnitCard.tsx                # [MODIFIED] Updated Unit interface + imageUrl support
 ```
+
+---
+
+## [2025-11-30] - Items Stats Data Fetching Implementation
+
+**Thời gian:** 1h | **Trạng thái:** ✅ Hoàn thành
+
+### 1. Tính năng mới (What I did)
+
+- [x] Thêm `fetchItemStats()` vào `stats.service.ts`
+- [x] Update `Items.tsx` để fetch data từ backend API
+- [x] Implement merge logic để enrich item data với **item metadata**
+- [x] Implement merge logic để enrich `topUsers` với **unit metadata** (imageUrl only)
+- [x] Remove expand button (TrendIcon) từ ItemsTable
+- [x] Thêm loading/error screens cho Items page
+- [x] Update ItemsTable component để accept items prop dynamically
+
+### 2. Quyết định Kỹ thuật (Key Decisions)
+
+- **Dual Metadata Merge:**
+
+  - _Lựa chọn:_ Merge cả **item metadata** (cho icon) và **unit metadata** (cho topUsers)
+  - _Lý do:_ Items có field `topUsers` (top 5 units sử dụng item này). Cần unit metadata để hiển thị avatar của units. ItemsTable component cần cả 2 loại metadata để render đầy đủ.
+
+- **Minimal Unit Metadata:**
+
+  - _Lựa chọn:_ Chỉ merge `imageUrl` từ unit metadata cho topUsers, không merge các field khác
+  - _Lý do:_ UI chỉ hiển thị avatar images của units trong topUsers. Name và stats không cần thiết → giữ code đơn giản, chỉ merge field thực sự dùng.
+
+- **Remove Expand Button:**
+
+  - _Lựa chọn:_ Bỏ TrendIcon button (expand) từ cuối mỗi row trong ItemsTable
+  - _Lý do:_ UI hiện tại chỉ hiển thị stats, không có nội dung mở rộng. Button không có function → remove để UI clean hơn.
+
+- **Complete Component Rewrite:**
+  - _Lựa chọn:_ Overwrite toàn bộ `ItemsTable.tsx` thay vì edit từng phần
+  - _Lý do:_ File có nhiều hardcoded data và unused imports. Rewrite clean hơn là patch nhiều lần, tránh file corruption.
+
+### 3. Vấn đề & Giải pháp (Challenges & Fixes)
+
+- **File Corruption During Edits:**
+
+  - _Nguyên nhân:_ Multi-edit operations trên file lớn với nhiều hardcoded data → duplicate code, leftover fragments.
+  - _Giải pháp:_
+    ```typescript
+    // Instead of multiple replace operations:
+    // Strategy: Completely overwrite file with clean implementation
+    write_to_file({
+      TargetFile: "ItemsTable.tsx",
+      Overwrite: true,
+      CodeContent: "// Clean component from scratch",
+    });
+    ```
+
+- **Two-Level Metadata Lookup:**
+
+  - _Vấn đề:_ Cần merge 2 loại metadata khác nhau (items + units) trong cùng một enrichment flow.
+  - _Giải pháp:_ Nested map operations:
+    ```typescript
+    const enrichedItems = rawItems.map((item) => {
+      // 1. Item metadata
+      const itemDetail = metadata.items.find(...);
+
+      // 2. Unit metadata for each topUser
+      const enrichedTopUsers = item.topUsers.map((user) => {
+        const userDetail = metadata.units.find(...);
+        return { id, name, imageUrl: userDetail?.image_url };
+      });
+
+      return { ...item, icon: itemDetail?.image_url, topUsers: enrichedTopUsers };
+    });
+    ```
+
+- **Unused Image Imports Cleanup:**
+  - _Nguyên nhân:_ ItemsTable component có rất nhiều hardcoded image imports không còn dùng nữa.
+  - _Giải pháp:_ Remove tất cả hardcoded imports, chỉ giữ fallback image. Component bây giờ dùng dynamic images từ metadata.
+
+### 4. Bài học rút ra (Learnings)
+
+- **Dual Metadata Sources**: Một component có thể cần merge nhiều loại metadata khác nhau. Design data flow rõ ràng: Item → Item metadata, TopUsers → Unit metadata.
+- **Selective Field Merge**: Không cần merge toàn bộ metadata object. Chỉ pick fields thực sự dùng trong UI (ví dụ: chỉ `imageUrl`, không cần `cost`, `traits`).
+- **Component Cleanup Strategy**: Đôi khi rewrite toàn bộ file clean hơn là patch nhiều lần, đặc biệt với component có nhiều hardcoded data.
+- **Visual UI Elements**: Remove UI elements không có function (như expand button không expand gì) để UI focus vào data thật.
+
+---
+
+## Code Comparison
+
+### Before (Mock Data):
+
+```typescript
+const itemsData = [
+  {
+    id: 1,
+    name: "Gargoyle Ston...",
+    icon: "https://images.unsplash.com/...",
+    playRate: "4.22/8",
+    topUsers: [1, 2, 3, 4, 5], // ← Just numbers
+  },
+  // ... hardcoded items
+];
+```
+
+### After (Dynamic with Dual Metadata):
+
+```typescript
+// Fetch from API
+const response = await fetchItemStats();
+
+// Enrich with ITEM metadata
+const itemDetail = metadata.items.find(...)
+const icon = itemDetail?.image_url;
+
+// Enrich topUsers with UNIT metadata
+const enrichedTopUsers = item.topUsers.map((user) => {
+  const userDetail = metadata.units.find(...);
+  return {
+    id: user.id,
+    name: userDetail?.name,
+    imageUrl: userDetail?.image_url  // ← Only field needed for UI
+  };
+});
+```
+
+## Files Modified
+
+```
+src/frontend/src/
+├── services/
+│   └── stats.service.ts            # [MODIFIED] Added fetchItemStats()
+├── pages/
+│   └── Items.tsx                   # [MODIFIED] Data fetching + dual metadata merge
+└── components/
+    └── ItemsTable.tsx              # [REWRITTEN] Clean component, removed TrendIcon, accepts items prop
+```
