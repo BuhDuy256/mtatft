@@ -588,3 +588,152 @@ src/frontend/src/
 └── components/
     └── TraitsTable.tsx             # [REFACTORED] Removed 13 SVG icons, uses dynamic images
 ```
+
+---
+
+## [2025-11-30] - Project Backlog Documentation
+
+**Thời gian:** 1h | **Trạng thái:** ✅ Hoàn thành
+
+### 1. Tính năng mới (What I did)
+
+- [x] Tạo `BACKLOG_TEMPLATE.md` - Template chuẩn cho backlog documents
+- [x] Viết `30_11_2025_BACKLOG.md` - Comprehensive backlog document
+- [x] Phân tích và prioritize 40+ items từ discussions
+- [x] Thêm effort estimates (S/M/L/XL) cho mỗi item
+- [x] Document dependencies (backend/frontend)
+- [x] Tạo acceptance criteria cho complex tasks
+
+### 2. Quyết định Kỹ thuật (Key Decisions)
+
+- **Priority System (P0/P1/P2/P3):**
+
+  - _Lựa chọn:_ 4-level priority thay vì chỉ "Critical/High/Medium/Low"
+  - _Lý do:_
+    - P0 (Critical) = Must fix immediately, breaks functionality
+    - P1 (High) = Important for next sprint, impacts UX
+    - P2 (Medium) = Nice to have improvements
+    - P3 (Low) = Polish, long-term
+  - _Impact:_ Dễ dàng filter items cho sprint planning
+
+- **Effort Estimation:**
+
+  - _Lựa chọn:_ S/M/L/XL (hours-based) thay vì story points
+  - _Lý do:_ Đơn giản, dễ hiểu cho solo developer. Story points cần team calibration.
+  - _Scale:_
+    - S (Small): < 2 hours
+    - M (Medium): 2-8 hours
+    - L (Large): 1-3 days
+    - XL (Extra Large): > 3 days
+
+- **Dependency Tracking:**
+
+  - _Lựa chọn:_ Explicit note "Dependencies: Backend API change" trong item description
+  - _Lý do:_ Tránh blocked tasks. Biết trước task nào cần coordinate với backend.
+  - _Example:_ Items filter theo type → cần backend thêm `item_type` field trước
+
+- **Grouped by Category + Priority:**
+  - _Lựa chọn:_ Structure: Critical → High Priority → Improvements → Epics → Tech Debt
+  - _Lý do:_ Scan nhanh, prioritize dễ. Critical items luôn ở top.
+
+### 3. Vấn đề & Giải pháp (Challenges & Fixes)
+
+- **Too Many Items (40+):**
+
+  - _Vấn đề:_ List quá dài, overwhelmed, không biết bắt đầu từ đâu
+  - _Giải pháp:_
+    - Phân loại rõ ràng: Bugs vs Features vs Debt
+    - Priority gán cho từng item
+    - Sprint planning suggestion ở cuối document
+    ```markdown
+    Sprint 1 (1 week): P0 items only (5 items)
+    Sprint 2 (1 week): P1 UX improvements (focus sort/search)
+    Sprint 3 (2 weeks): P1 backend + Tech Debt
+    ```
+
+- **Duplicate/Related Items:**
+
+  - _Vấn đề:_ Nhiều items liên quan nhau (VD: "Sort Top Comps", "Sort Items", "Sort Units")
+  - _Giải pháp:_
+    - Group related items trong cùng section
+    - Note cross-references
+    - Có thể tạo Epic "Advanced Filtering System" để wrap các sorting/filtering features
+
+- **Missing Context:**
+  - _Vấn đề:_ Items như "Play Rate /8 issue" không rõ context
+  - _Giải pháp:_ Thêm "Questions to answer" section:
+    ```markdown
+    - Questions to answer:
+      - "/8" nghĩa là gì? (8 players? 8 games?)
+      - Backend tính sai hay frontend format sai?
+    ```
+
+### 4. Bài học rút ra (Learnings)
+
+- **Documentation as Planning Tool**: Viết backlog chi tiết giúp:
+  - Clarify requirements (khi viết AC, phát hiện thiếu info)
+  - Estimate effort realistically
+  - Identify blockers/dependencies sớm
+- **Priority ≠ Effort**: Item P0 có thể chỉ mất 30 mins (VD: round stats), còn P3 có thể mất 3 ngày (VD: Team Builder). Priority là about impact, không phải về complexity.
+
+- **Backend Dependencies Matter**: Nhiều frontend tasks bị block bởi backend changes. Cần coordinate:
+
+  - Item Type feature
+  - Patch filter
+  - Play Rate calculation fix
+
+- **Breaking Down Epics**: Features lớn (Team Builder, Advanced Filters) cần breakdown thành sub-tasks cụ thể trước khi implement. Không nên có items > 3 ngày trong sprint.
+
+---
+
+## Backlog Structure
+
+### **Template (`BACKLOG_TEMPLATE.md`)**
+
+```markdown
+## ✅ Completed
+
+## 🔴 Critical (P0)
+
+## 🟡 High Priority (P1)
+
+## 🟢 Improvements (P2-P3)
+
+## 🔵 Epics / Features
+
+## 🟡 Technical Debt
+```
+
+### **Document Statistics (`30_11_2025_BACKLOG.md`)**
+
+- **Total Items:** 40+
+- **Critical (P0):** 5 items
+- **High Priority (P1):** 10 items
+- **Improvements (P2-P3):** 8 items
+- **Epics:** 4 large features
+- **Technical Debt:** 10 items
+
+### **Top Priority Items (P0)**
+
+1. Fix TopComp icons (hiển thị sai tier)
+2. Round stats to 2 decimals
+3. Fix Items table layout vỡ
+4. Investigate Play Rate "/8" format
+5. Ensure case-insensitive ID matching in backend
+
+### **Quick Wins (< 30 mins each)**
+
+- Remove tier labels in Units page
+- Fix Traits Win column width
+- Remove toggle switches
+- Setup tier color constants
+
+---
+
+## Files Created
+
+```
+docs/dev_log/
+├── BACKLOG_TEMPLATE.md         # [NEW] Reusable template for future backlogs
+└── 30_11_2025_BACKLOG.md       # [NEW] Comprehensive current backlog (40+ items)
+```
