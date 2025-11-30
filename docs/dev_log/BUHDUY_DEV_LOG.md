@@ -195,3 +195,121 @@ src/frontend/src/
 └── pages/
     └── TeamCompositions.tsx        # [MODIFIED] Data fetching + merge logic
 ```
+
+---
+
+## [2025-11-30] - Unit Stats Data Fetching Implementation
+
+**Thời gian:** 1.5h | **Trạng thái:** ✅ Hoàn thành
+
+### 1. Tính năng mới (What I did)
+
+- [x] Thêm `fetchUnitStats()` vào `stats.service.ts`
+- [x] Update `Units.tsx` để fetch data từ backend API
+- [x] Implement merge logic để enrich unit data với metadata
+- [x] Group units theo cost tier (1-5) dynamically
+- [x] Fix duplicate key error do string ID parsing
+- [x] Thêm loading/error screens cho Units page
+- [x] Update Unit interfaces trong `TierSection` và `UnitCard` components
+
+### 2. Quyết định Kỹ thuật (Key Decisions)
+
+- **Dynamic Tier Grouping:**
+
+  - _Lựa chọn:_ Group units theo `cost` field từ metadata thay vì hardcoded tiers
+  - _Lý do:_ Linh hoạt hơn khi backend data thay đổi. Không cần maintain danh sách units cho từng tier. Code tự động adapt với bất kỳ cost tier nào (1-5).
+
+- **String ID Strategy:**
+
+  - _Lựa chọn:_ Dùng string ID trực tiếp (`unit.id`) thay vì parse sang number
+  - _Lý do:_ Backend IDs có format kiểu `"TFT15_Rumble"` (string), không phải số. `parseInt()` sẽ trả về `NaN` → fallback về `0` → duplicate keys. Dùng string ID giữ nguyên uniqueness.
+
+- **Simplified Data Model:**
+
+  - _Lựa chọn:_ Bỏ merge `topItems` metadata
+  - _Lý do:_ UI hiện tại không hiển thị top items info, chỉ cần unit stats. Giữ code đơn giản, chỉ merge data thực sự cần thiết.
+
+- **Tier Background Colors:**
+  - _Lựa chọn:_ Map cost → color với helper function
+  - _Lý do:_ Consistent visual design. Tier 1 (gray), 2 (green), 3 (blue), 4 (pink), 5 (gold) matching TFT conventions.
+
+### 3. Vấn đề & Giải pháp (Challenges & Fixes)
+
+- **Lỗi:** `Encountered two children with the same key, 0`
+
+  - _Nguyên nhân:_ `parseInt(unit.id)` với ID dạng `"TFT15_Rumble"` trả về `NaN`, fallback về `0`. Nhiều units cùng có `id: 0` → duplicate keys.
+  - _Giải pháp:_
+    ```typescript
+    // Before: id: parseInt(unit.id) || 0
+    // After:
+    id: unit.id; // Keep string format
+    ```
+
+- **Lỗi:** TypeScript type mismatch cho `Unit` interface
+
+  - _Nguyên nhân:_ `TierSection` và `UnitCard` có riêng local `Unit` interface với `id: number`, incompatible với string IDs.
+  - _Giải pháp:_ Update cả 2 interfaces:
+    ```typescript
+    interface Unit {
+      id: string | number;  // ← Accept both types
+      imageUrl?: string;    // ← Add for metadata
+      ...
+    }
+    ```
+
+- **Over-engineering:** Ban đầu merge cả items metadata
+  - _Nguyên nhân:_ Nghĩ rằng sẽ cần hiển thị top items trong UI.
+  - _Giải pháp:_ Remove items merge logic vì UI không dùng, giảm complexity không cần thiết.
+
+### 4. Bài học rút ra (Learnings)
+
+- **ID Type Awareness**: Backend IDs không phải lúc nào cũng là numbers. Cần check format trước khi parse/convert. String IDs an toàn hơn cho data không rõ structure.
+- **YAGNI Principle** (You Aren't Gonna Need It): Đừng implement features chưa cần (như items merge). Giữ code đơn giản, chỉ build những gì thực sự dùng.
+- **Dynamic Grouping**: Group by metadata field (cost) linh hoạt hơn hardcoded lists. Scale tốt khi data thay đổi.
+- **Interface Consistency**: Khi share data giữa components, dùng consistent interface hoặc shared types thay vì duplicate definitions.
+
+---
+
+## Code Comparison
+
+### Before (Mock Data):
+
+```typescript
+const tierData = [
+  { tier: 1, name: "Tier 1", units: [hardcoded...] },
+  { tier: 2, name: "Tier 2", units: [hardcoded...] },
+  ...
+];
+```
+
+### After (Dynamic):
+
+```typescript
+// Fetch from API
+const response = await fetchUnitStats();
+
+// Enrich with metadata
+const enrichedUnits = response.unitStats.map(unit => ({
+  id: unit.id,
+  cost: metadata.units.find(m => m.id === unit.id)?.cost
+}));
+
+// Group by cost dynamically
+const groupedByCost = {};
+enrichedUnits.forEach(unit => {
+  groupedByCost[unit.cost] = [..., unit];
+});
+```
+
+## Files Modified
+
+```
+src/frontend/src/
+├── services/
+│   └── stats.service.ts            # [MODIFIED] Added fetchUnitStats()
+├── pages/
+│   └── Units.tsx                   # [MODIFIED] Data fetching + merge logic
+└── components/
+    ├── TierSection.tsx             # [MODIFIED] Updated Unit interface
+    └── UnitCard.tsx                # [MODIFIED] Updated Unit interface + imageUrl support
+```

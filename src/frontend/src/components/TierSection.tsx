@@ -1,10 +1,11 @@
-import { UnitCard } from './UnitCard';
+import { UnitCard } from "./UnitCard";
 
 interface Unit {
-  id: number;
+  id: string | number;
   name: string;
   avgPlace: number;
   playRate: number;
+  imageUrl?: string;
 }
 
 interface TierSectionProps {
@@ -18,7 +19,7 @@ interface TierSectionProps {
 
 export function TierSection({ tier }: TierSectionProps) {
   return (
-    <div 
+    <div
       className="rounded-lg p-6"
       style={{ backgroundColor: tier.backgroundColor }}
     >

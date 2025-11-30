@@ -1,110 +1,134 @@
+import { useEffect, useMemo, useState } from "react";
+import { useMetadata } from "../contexts/MetadataContext";
 import { TierSection } from "../components/TierSection";
 import MainLayout from "../layouts/MainLayout";
+import { fetchUnitStats } from "../services/stats.service";
+import type { UnitStat } from "../types/stats";
 
-// Mock unit data for each tier
-const tierData = [
-  {
-    tier: 1,
-    name: "Tier 1",
-    backgroundColor: "#8B7355",
-    units: [
-      { id: 1, name: "Ashlynn", avgPlace: 1.91, playRate: 4.0 },
-      { id: 2, name: "Ezreal", avgPlace: 2.81, playRate: 5.6 },
-      { id: 3, name: "Sorren", avgPlace: 1.99, playRate: 4.8 },
-      { id: 4, name: "Driar", avgPlace: 1.43, playRate: 6.1 },
-      { id: 5, name: "Kalissa", avgPlace: 1.83, playRate: 4.8 },
-      { id: 6, name: "Kayle", avgPlace: 0.91, playRate: 5.5 },
-      { id: 7, name: "Nomura", avgPlace: 1.72, playRate: 6.2 },
-      { id: 8, name: "Lucian", avgPlace: 1.99, playRate: 5.8 },
-      { id: 9, name: "Mela", avgPlace: 2.43, playRate: 3.4 },
-      { id: 10, name: "Noctun", avgPlace: 0.61, playRate: 4.9 },
-      { id: 11, name: "Veli", avgPlace: 0.49, playRate: 7.1 },
-      { id: 12, name: "Sivir", avgPlace: 0.91, playRate: 6.4 },
-      { id: 13, name: "Syndra", avgPlace: 0.76, playRate: 5.3 },
-      { id: 14, name: "Zirc", avgPlace: 1.11, playRate: 4.4 },
-    ],
-  },
-  {
-    tier: 2,
-    name: "Tier 2",
-    backgroundColor: "#B8D4A8",
-    units: [
-      { id: 15, name: "Akshan", avgPlace: 1.54, playRate: 5.7 },
-      { id: 16, name: "Blitzcrank", avgPlace: 0.54, playRate: 6.8 },
-      { id: 17, name: "Janna", avgPlace: 1.02, playRate: 5.9 },
-      { id: 18, name: "Kassadin", avgPlace: 1.65, playRate: 4.2 },
-      { id: 19, name: "Kog Maw", avgPlace: 1.98, playRate: 6.0 },
-      { id: 20, name: "Katier", avgPlace: 2.14, playRate: 3.8 },
-      { id: 21, name: "Lissandra", avgPlace: 1.76, playRate: 5.4 },
-      { id: 22, name: "Nidalee", avgPlace: 2.33, playRate: 4.6 },
-      { id: 23, name: "Singed", avgPlace: 1.54, playRate: 5.1 },
-      { id: 24, name: "Sejuani", avgPlace: 0.87, playRate: 6.3 },
-      { id: 25, name: "Tristana", avgPlace: 1.21, playRate: 7.2 },
-      { id: 26, name: "Urgot", avgPlace: 1.43, playRate: 5.5 },
-      { id: 27, name: "Zyra", avgPlace: 2.01, playRate: 4.9 },
-      { id: 28, name: "Vex", avgPlace: 0.76, playRate: 6.1 },
-    ],
-  },
-  {
-    tier: 3,
-    name: "Tier 3",
-    backgroundColor: "#A8D8E8",
-    units: [
-      { id: 29, name: "Akali", avgPlace: 1.87, playRate: 5.2 },
-      { id: 30, name: "Darius", avgPlace: 2.12, playRate: 4.8 },
-      { id: 31, name: "Garen", avgPlace: 1.65, playRate: 6.4 },
-      { id: 32, name: "Neeko", avgPlace: 0.98, playRate: 7.1 },
-      { id: 33, name: "Karma", avgPlace: 1.43, playRate: 5.9 },
-      { id: 34, name: "Corki", avgPlace: 2.34, playRate: 4.3 },
-      { id: 35, name: "Ekko", avgPlace: 1.54, playRate: 6.2 },
-      { id: 36, name: "Jinx", avgPlace: 0.87, playRate: 7.5 },
-      { id: 37, name: "Mordekaiser", avgPlace: 1.76, playRate: 5.6 },
-      { id: 38, name: "Nasus", avgPlace: 2.01, playRate: 4.9 },
-      { id: 39, name: "Rumble", avgPlace: 1.32, playRate: 6.8 },
-      { id: 40, name: "Shen", avgPlace: 1.98, playRate: 5.3 },
-      { id: 41, name: "Swain", avgPlace: 2.23, playRate: 4.5 },
-      { id: 42, name: "Veigar", avgPlace: 1.54, playRate: 6.0 },
-      { id: 43, name: "Vi", avgPlace: 1.21, playRate: 6.7 },
-    ],
-  },
-  {
-    tier: 4,
-    name: "Tier 4",
-    backgroundColor: "#E8B4D4",
-    units: [
-      { id: 44, name: "Ahri", avgPlace: 1.65, playRate: 6.2 },
-      { id: 45, name: "Camille", avgPlace: 2.01, playRate: 5.4 },
-      { id: 46, name: "Draven", avgPlace: 1.87, playRate: 5.8 },
-      { id: 47, name: "Fiora", avgPlace: 1.43, playRate: 6.5 },
-      { id: 48, name: "Irelia", avgPlace: 0.98, playRate: 7.3 },
-      { id: 49, name: "Renata", avgPlace: 2.34, playRate: 4.7 },
-      { id: 50, name: "Leona", avgPlace: 1.54, playRate: 6.1 },
-      { id: 51, name: "Nami", avgPlace: 1.76, playRate: 5.5 },
-      { id: 52, name: "Sett", avgPlace: 1.21, playRate: 6.9 },
-      { id: 53, name: "Silco", avgPlace: 2.12, playRate: 5.0 },
-      { id: 54, name: "Talon", avgPlace: 1.87, playRate: 5.7 },
-      { id: 55, name: "Zeri", avgPlace: 0.87, playRate: 7.6 },
-      { id: 56, name: "Zoe", avgPlace: 1.98, playRate: 5.3 },
-    ],
-  },
-  {
-    tier: 5,
-    name: "Tier 5",
-    backgroundColor: "#E8C47A",
-    units: [
-      { id: 57, name: "Caitlyn", avgPlace: 1.32, playRate: 6.8 },
-      { id: 58, name: "Heimerdinger", avgPlace: 2.01, playRate: 5.2 },
-      { id: 59, name: "Jayce", avgPlace: 1.65, playRate: 6.4 },
-      { id: 60, name: "Jinx", avgPlace: 0.98, playRate: 7.5 },
-      { id: 61, name: "Lux", avgPlace: 1.87, playRate: 5.9 },
-      { id: 62, name: "Malzahar", avgPlace: 1.43, playRate: 6.6 },
-      { id: 63, name: "Warwick", avgPlace: 2.12, playRate: 5.1 },
-      { id: 64, name: "Viktor", avgPlace: 1.76, playRate: 5.8 },
-    ],
-  },
-];
+const getTierBackgroundColor = (cost: number): string => {
+  const colors: Record<number, string> = {
+    1: "#8B7355",
+    2: "#B8D4A8",
+    3: "#A8D8E8",
+    4: "#E8B4D4",
+    5: "#E8C47A",
+  };
+  return colors[cost] || "#8B7355";
+};
 
 export default function Units() {
+  const { data: metadata } = useMetadata();
+  const [rawUnits, setRawUnits] = useState<UnitStat[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadUnitStats() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const response = await fetchUnitStats();
+
+        console.log("Unit Stats API Response:", response);
+
+        if (
+          response &&
+          response.unitStats &&
+          Array.isArray(response.unitStats)
+        ) {
+          setRawUnits(response.unitStats);
+        } else {
+          console.warn("Invalid response structure:", response);
+          setRawUnits([]);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to load unit stats";
+        setError(errorMessage);
+        console.error("Error loading unit stats:", err);
+        setRawUnits([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadUnitStats();
+  }, []);
+
+  const tierData = useMemo(() => {
+    if (!metadata || !rawUnits || rawUnits.length === 0) return [];
+
+    // Enrich units with metadata
+    const enrichedUnits = rawUnits.map((unit) => {
+      const unitDetail = metadata.units.find(
+        (m) => m.id.toLowerCase() === unit.id.toLowerCase()
+      );
+
+      return {
+        id: unit.id, // Use string ID directly to avoid duplicate keys
+        name: unitDetail?.name || unit.name,
+        cost: unitDetail?.cost || 1,
+        imageUrl: unitDetail?.image_url || unit.icon,
+        avgPlace: unit.stats?.avg_place || 0,
+        playRate: unit.stats?.play_rate || 0,
+      };
+    });
+
+    // Group by cost (tier)
+    const groupedByCost: Record<number, any[]> = {};
+    enrichedUnits.forEach((unit) => {
+      if (!groupedByCost[unit.cost]) {
+        groupedByCost[unit.cost] = [];
+      }
+      groupedByCost[unit.cost].push(unit);
+    });
+
+    // Convert to tier sections format
+    return Object.entries(groupedByCost)
+      .map(([cost, units]) => ({
+        tier: parseInt(cost),
+        name: `Tier ${cost}`,
+        backgroundColor: getTierBackgroundColor(parseInt(cost)),
+        units: units.sort((a, b) => a.avgPlace - b.avgPlace), // Sort by avg place
+      }))
+      .sort((a, b) => a.tier - b.tier); // Sort tiers 1-5
+  }, [rawUnits, metadata]);
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex-1 w-full max-w-[1000px] mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-slate-400">Loading unit statistics...</p>
+            </div>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="flex-1 w-full max-w-[1000px] mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center max-w-md p-8 bg-slate-800/50 rounded-lg">
+              <p className="text-red-400 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="flex-1 w-full max-w-[1000px] mx-auto px-4 py-8">
