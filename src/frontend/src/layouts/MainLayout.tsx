@@ -9,7 +9,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "#F0EAD6" }}
+      style={{ backgroundColor: "#1e293b" }}
     >
       <Header />
 

@@ -83,11 +83,11 @@ export function UnitList() {
 
   // Define colors for each tier
   const tierStyles = {
-    1: { border: '#808080', bg: '#6b7158' }, // Gray
-    2: { border: '#4ade80', bg: '#6b7158' }, // Green
-    3: { border: '#60a5fa', bg: '#6b7158' }, // Blue
-    4: { border: '#a855f7', bg: '#7d6b65' }, // Purple
-    5: { border: '#fbbf24', bg: '#9d8865' }, // Gold
+    1: { border: '#808080', bg: '#2a2f45' }, // Gray
+    2: { border: '#4ade80', bg: '#103037' }, // Green
+    3: { border: '#60a5fa', bg: '#1a2e4b' }, // Blue
+    4: { border: '#a855f7', bg: '#2c1541' }, // Purple
+    5: { border: '#fbbf24', bg: '#302d2e' }, // Gold
   };
 
   if (isLoading) {

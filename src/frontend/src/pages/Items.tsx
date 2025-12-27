@@ -81,7 +81,7 @@ export default function Items() {
   return (
     <MainLayout>
       <div className="flex-1 w-full max-w-[1024px] mx-auto px-4 py-8">
-        <div className="rounded-lg overflow-hidden">
+        <div className="rounded-lg overflow-hidden flex flex-col items-center">
           {/* <ItemsFilter /> */}
           <ItemsTable items={enrichedItems} />
         </div>

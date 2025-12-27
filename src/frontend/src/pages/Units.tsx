@@ -6,11 +6,11 @@ import MainLayout from "../layouts/MainLayout";
 
 const getTierBackgroundColor = (cost: number): string => {
   const colors: Record<number, string> = {
-    1: "#8B7355",
-    2: "#B8D4A8",
-    3: "#A8D8E8",
-    4: "#E8B4D4",
-    5: "#E8C47A",
+    1: "#2a2f45",
+    2: "#103037",
+    3: "#1a2e4b",
+    4: "#2c1541",
+    5: "#302d2e",
   };
   return colors[cost] || "#8B7355";
 };

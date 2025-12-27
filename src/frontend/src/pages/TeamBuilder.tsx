@@ -106,10 +106,13 @@ export default function TeamBuilderPage() {
 
   const handleExportCode = async () => {
     // Create clean JSON (exclude null values)
-    const cleanState: Record<string, string> = {};
+    const cleanState: Record<string, { name: string, cost: number }> = {};
     Object.entries(boardState).forEach(([key, value]) => {
       if (value !== null) {
-        cleanState[key] = value;
+        cleanState[key] = {
+          name: value,
+          cost: unitCostMap[value] || 0
+        };
       }
     });
 
@@ -138,19 +141,35 @@ export default function TeamBuilderPage() {
         throw new Error('Invalid format: must be an object');
       }
 
-      // Validate slot IDs
+      // Validate slot IDs and build state
       const slotPattern = /^slot-[0-3]-[0-6]$/;
+      const newState: Record<string, string> = {};
+
       for (const key of Object.keys(imported)) {
         if (!slotPattern.test(key)) {
           throw new Error(`Invalid slot ID: ${key}`);
         }
-        if (typeof imported[key] !== 'string') {
-          throw new Error(`Invalid unit name at ${key}`);
+        
+        const value = imported[key];
+        
+        // Handle new format { name, cost }
+        if (typeof value === 'object' && value !== null && 'name' in value) {
+           if (typeof value.name !== 'string') {
+             throw new Error(`Invalid unit name at ${key}`);
+           }
+           newState[key] = value.name;
+        } 
+        // Handle legacy format (string directly)
+        else if (typeof value === 'string') {
+           newState[key] = value;
+        }
+        else {
+           throw new Error(`Invalid data at ${key}`);
         }
       }
 
       // Update board state
-      setBoardState(imported as Record<string, string>);
+      setBoardState(newState);
       showToast('Team composition imported!');
     } catch (error) {
       if (error instanceof Error) {
@@ -179,21 +198,21 @@ export default function TeamBuilderPage() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleExportCode}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-lg transition-colors shadow-md"
               >
                 <Download size={18} />
                 Export Code
               </button>
               <button
                 onClick={handleImportCode}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-lg transition-colors shadow-md"
               >
                 <Upload size={18} />
                 Import Code
               </button>
               <button
                 onClick={handleClearBoard}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-lg transition-colors shadow-md"
               >
                 <Trash2 size={18} />
                 Clear Board

@@ -63,7 +63,7 @@ export default function Traits() {
   return (
     <MainLayout>
       <div className="flex-1 flex items-center justify-center w-full px-4 py-8">
-        <div className="rounded-lg overflow-hidden max-w-[660px] w-full">
+        <div className="rounded-lg overflow-hidden max-w-[660px] w-full flex flex-col items-center">
           <TraitsTable traits={enrichedTraits} />
         </div>
       </div>

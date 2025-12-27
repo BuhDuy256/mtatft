@@ -25,6 +25,7 @@ interface TeamComp {
 
 interface TeamCompCardProps {
   comp: TeamComp;
+  index: number;
 }
 
 function ChampionPortrait({ champion }: { champion: Champion }) {
@@ -53,9 +54,14 @@ function ChampionPortrait({ champion }: { champion: Champion }) {
   );
 }
 
-export function TeamCompCard({ comp }: TeamCompCardProps) {
+export function TeamCompCard({ comp, index }: TeamCompCardProps) {
+  const bgColor = index % 2 === 0 ? "#555555" : "#5F5F5F";
+  
   return (
-    <div className="relative w-fit bg-gradient-to-br from-[#b8965e] to-[#a67c4c] rounded-[4px] shadow-lg min-w-[700px]">
+    <div 
+      className="relative w-fit rounded-[4px] shadow-lg min-w-[700px] mb-2"
+      style={{ backgroundColor: bgColor }}
+    >
       <div className="flex flex-row items-center justify-center size-full">
         <div className="box-border content-stretch flex items-center justify-center px-[4px] py-0 relative size-full">
           {/* Left Section - Team Info and Champions */}

@@ -8,7 +8,7 @@ function TopCompsTab() {
     <Link to="/">
       <div
         className={`box-border content-stretch flex h-[44px] items-center justify-center min-w-[80px] px-[16px] py-0 relative shrink-0 cursor-pointer transition-colors ${
-          isActive ? "bg-[#443592]" : "hover:bg-[rgba(255,255,255,0.1)]"
+          isActive ? "bg-[#6E6E6E]" : "hover:bg-[rgba(255,255,255,0.1)]"
         }`}
         data-name="Component 4"
       >
@@ -18,7 +18,7 @@ function TopCompsTab() {
         >
           {isActive && (
             <div
-              className="absolute bg-[#9e8cfc] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
+              className="absolute bg-[#858585] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
               data-name="Horizontal Divider"
             />
           )}
@@ -41,7 +41,7 @@ function UnitsTab() {
     <Link to="/units">
       <div
         className={`box-border content-stretch flex h-[44px] items-center justify-center min-w-[80px] px-[18px] py-0 relative shrink-0 cursor-pointer transition-colors ${
-          isActive ? "bg-[#443592]" : "hover:bg-[rgba(255,255,255,0.1)]"
+          isActive ? "bg-[#6E6E6E]" : "hover:bg-[rgba(255,255,255,0.1)]"
         }`}
         data-name="Component 4"
       >
@@ -51,7 +51,7 @@ function UnitsTab() {
         >
           {isActive && (
             <div
-              className="absolute bg-[#9e8cfc] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
+              className="absolute bg-[#858585] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
               data-name="Horizontal Divider"
             />
           )}
@@ -72,7 +72,7 @@ function ItemsTab() {
     <Link to="/items">
       <div
         className={`box-border content-stretch flex h-[44px] items-center justify-center min-w-[80px] pl-[17.85px] pr-[17.84px] py-0 relative shrink-0 cursor-pointer transition-colors ${
-          isActive ? "bg-[#443592]" : "hover:bg-[rgba(255,255,255,0.1)]"
+          isActive ? "bg-[#6E6E6E]" : "hover:bg-[rgba(255,255,255,0.1)]"
         }`}
         data-name="Component 4"
       >
@@ -82,7 +82,7 @@ function ItemsTab() {
         >
           {isActive && (
             <div
-              className="absolute bg-[#9e8cfc] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
+              className="absolute bg-[#858585] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
               data-name="Horizontal Divider"
             />
           )}
@@ -103,7 +103,7 @@ function TraitsTab() {
     <Link to="/traits">
       <div
         className={`box-border content-stretch flex h-[44px] items-center justify-center min-w-[80px] px-[16px] py-0 relative shrink-0 cursor-pointer transition-colors ${
-          isActive ? "bg-[#443592]" : "hover:bg-[rgba(255,255,255,0.1)]"
+          isActive ? "bg-[#6E6E6E]" : "hover:bg-[rgba(255,255,255,0.1)]"
         }`}
         data-name="Component 6"
       >
@@ -113,7 +113,7 @@ function TraitsTab() {
         >
           {isActive && (
             <div
-              className="absolute bg-[#9e8cfc] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
+              className="absolute bg-[#858585] bottom-[-4px] h-[2px] left-[-5px] w-[60.86px]"
               data-name="Horizontal Divider"
             />
           )}
@@ -129,7 +129,7 @@ function TraitsTab() {
 export function StatsNavigation() {
   return (
     <div
-      className="bg-[#392c72] content-stretch flex flex-col items-center relative w-full"
+      className="bg-[#5C5C5C] content-stretch flex flex-col items-center relative w-full"
       data-name="Background"
     >
       <div

@@ -39,12 +39,14 @@ function SortIcon({ direction, active }: { direction: SortDirection; active: boo
   );
 }
 
-function ItemRow({ item }: { item: Item }) {
+function ItemRow({ item, index }: { item: Item; index: number }) {
   const itemImage = item.icon || imgGargoyleStoneplate;
+  const bgColor = index % 2 === 0 ? "#5F5F5F" : "#555555";
 
   return (
     <div
-      className="content-stretch flex h-[46px] items-start relative shrink-0 w-full"
+      className="content-stretch flex h-[46px] items-start relative shrink-0 w-full transition-colors hover:bg-white/5"
+      style={{ backgroundColor: bgColor }}
       data-name="Container"
     >
       {/* Item Icon & Name */}
@@ -163,10 +165,6 @@ function ItemRow({ item }: { item: Item }) {
         className="box-border content-stretch flex h-full items-center gap-[4px] pl-[12px] pr-0 py-0 relative shrink-0 w-[160px]"
         data-name="VerticalBorder"
       >
-        <div
-          aria-hidden="true"
-          className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
-        />
         {item.topUsers.slice(0, 5).map((user, index) => (
           <div
             key={index}
@@ -239,7 +237,7 @@ export function ItemsTable({ items }: ItemsTableProps) {
     sortable?: boolean;
   }) => (
     <div
-      className={`box-border content-stretch flex h-full items-center gap-[4px] justify-center pl-0 pr-[16px] py-0 relative shrink-0 ${width} ${sortable ? "cursor-pointer hover:bg-[#6a7358] transition-colors" : ""}`}
+      className={`box-border content-stretch flex h-full items-center gap-[4px] justify-center pl-0 pr-[16px] py-0 relative shrink-0 ${width} ${sortable ? "cursor-pointer hover:bg-[#6e6e6e] transition-colors" : ""}`}
       data-name="VerticalBorder"
       onClick={() => sortable && handleSort(field)}
     >
@@ -263,15 +261,15 @@ export function ItemsTable({ items }: ItemsTableProps) {
   );
 
   return (
-    <div className="bg-[#a89968] relative w-full" data-name="Container">
+    <div className="bg-[#555555] relative w-fit rounded-lg overflow-hidden shrink-0" data-name="Container">
       {/* Table Header */}
       <div
-        className="bg-[#7f886a] content-stretch flex h-[46px] items-start relative shrink-0 w-full"
+        className="bg-[#555555] content-stretch flex h-[46px] items-start relative shrink-0 w-full"
         data-name="Container"
       >
         {/* Item Header */}
         <div
-          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[250px] cursor-pointer hover:bg-[#6a7358] transition-colors"
+          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[250px] cursor-pointer hover:bg-[#6e6e6e] transition-colors"
           data-name="VerticalBorder"
           onClick={() => handleSort("name")}
         >
@@ -300,13 +298,9 @@ export function ItemsTable({ items }: ItemsTableProps) {
 
         {/* Top Users Header (not sortable) */}
         <div
-          className="box-border content-stretch flex h-full items-center pl-[12px] pr-0 py-0 relative shrink-0 w-[160px]"
+          className="box-border content-stretch flex h-full items-center pl-[12px] pr-0 py-0 relative shrink-0 w-[150px]"
           data-name="VerticalBorder"
         >
-          <div
-            aria-hidden="true"
-            className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
-          />
           <div
             className="flex flex-col font-['Roboto',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap"
             style={
@@ -324,7 +318,7 @@ export function ItemsTable({ items }: ItemsTableProps) {
         data-name="Container"
       >
         {sortedItems.map((item, index) => (
-          <ItemRow key={item.id || index} item={item} />
+          <ItemRow key={item.id || index} item={item} index={index} />
         ))}
       </div>
     </div>

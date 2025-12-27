@@ -97,7 +97,7 @@ function HexSlot({ row, col, unitName, unitImageUrl, unitCost }: HexSlotProps) {
         <polygon
           points="50,5 93.3,27.5 93.3,72.5 50,95 6.7,72.5 6.7,27.5"
           fill={fillColor}
-          stroke="#6b5d3f"
+          // stroke="#6b5d3f"
           strokeWidth="2.5"
           className="transition-colors"
         />
@@ -120,7 +120,7 @@ export function HexagonalBoard({ boardState, unitImageUrlMap, unitCostMap }: Hex
   const cols = 7;
 
   return (
-    <div className="w-full bg-gradient-to-b from-[#a89560] via-[#9d8a55] to-[#8b7d4f] p-8 rounded-lg shadow-xl">
+    <div className="w-full bg-[#555555] p-8 rounded-lg shadow-xl">
       <div className="max-w-[700px] mx-auto">
         {Array.from({ length: rows }).map((_, rowIndex) => {
           // Odd rows (index 1 and 3) are offset

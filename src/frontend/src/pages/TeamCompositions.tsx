@@ -8,11 +8,11 @@ import { formatNumber } from "../utils/format";
 
 const getCostBorderColor = (cost: number): string => {
   const colors: Record<number, string> = {
-    1: "rgba(128,128,128,0.88)",
-    2: "rgba(84,195,255,0.88)",
-    3: "rgba(84,195,255,0.88)",
-    4: "rgba(222,14,189,0.88)",
-    5: "rgba(255,196,48,0.88)",
+    1: "#808080",
+    2: "#4ade80",
+    3: "#60a5fa",
+    4: "#a855f7",
+    5: "#fbbf24",
   };
   return colors[cost] || "rgba(128,128,128,0.88)";
 };
@@ -104,8 +104,8 @@ export default function TeamCompositions() {
         {/* <FilterSection /> */}
 
         <div className="mt-6 flex flex-col items-center">
-          {enrichedComps.map((comp) => (
-            <TeamCompCard key={comp.id} comp={comp} />
+          {enrichedComps.map((comp, index) => (
+            <TeamCompCard key={comp.id} comp={comp} index={index} />
           ))}
         </div>
       </div>

@@ -35,7 +35,7 @@ export function MainNavigation({
   const isTeamBuilder = location.pathname === "/team-builder";
 
   return (
-    <nav className="bg-[#312866] shadow-md">
+    <nav className="bg-[#555555] shadow-md">
       <div className="w-full max-w-[1024px] mx-auto px-4">
         <div className="content-stretch flex gap-[199.17px] items-center justify-between relative h-[48px]">
           {/* Left side - Nav Links */}
@@ -45,7 +45,7 @@ export function MainNavigation({
               <Link to="/home">
                 <div
                   className={`box-border content-stretch flex h-[48px] items-center justify-center min-w-[52px] pb-[16.5px] pt-[15.5px] px-[20px] relative shrink-0 cursor-pointer transition-colors ${
-                    isHome ? "bg-[#443592]" : "hover:bg-[rgba(255,255,255,0.1)]"
+                    isHome ? "bg-[#6e6e6e]" : "hover:bg-[rgba(255,255,255,0.1)]"
                   }`}
                 >
                   <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-center text-nowrap tracking-[0.07px] uppercase">
@@ -57,7 +57,7 @@ export function MainNavigation({
               {/* Stats Link */}
               <div
                 className={`box-border content-stretch flex h-[48px] items-center justify-center min-w-[52px] pl-[12px] pr-[20px] py-0 relative shrink-0 cursor-pointer transition-colors ${
-                  isStats ? "bg-[#443592]" : "hover:bg-[rgba(255,255,255,0.1)]"
+                  isStats ? "bg-[#6e6e6e]" : "hover:bg-[rgba(255,255,255,0.1)]"
                 }`}
                 onClick={onStatsClick}
               >
@@ -82,7 +82,7 @@ export function MainNavigation({
                 <div
                   className={`box-border content-stretch flex h-[48px] items-center justify-center min-w-[52px] pb-[16.5px] pt-[15.5px] px-[20px] relative shrink-0 cursor-pointer transition-colors ${
                     isTeamBuilder
-                      ? "bg-[#443592]"
+                      ? "bg-[#6e6e6e]"
                       : "hover:bg-[rgba(255,255,255,0.1)]"
                   }`}
                 >

@@ -31,6 +31,7 @@ interface TraitRowProps {
   place: string;
   top4: string;
   win: string;
+  index: number;
 }
 
 function TraitRow({
@@ -40,10 +41,14 @@ function TraitRow({
   place,
   top4,
   win,
+  index,
 }: TraitRowProps) {
+  const bgColor = index % 2 === 0 ? "#5F5F5F" : "#555555";
+
   return (
     <div
-      className="content-stretch flex h-[46px] items-start relative shrink-0 w-full"
+      className="content-stretch flex h-[46px] items-start relative shrink-0 w-full transition-colors hover:bg-white/5"
+      style={{ backgroundColor: bgColor }}
       data-name="Container"
     >
       {/* Trait Column */}
@@ -195,22 +200,26 @@ export function TraitsTable({ traits }: TraitsTableProps) {
     field, 
     label, 
     width,
-    sortable = true 
+    sortable = true,
+    hasBorder = true
   }: { 
     field: SortField; 
     label: string; 
     width: string;
     sortable?: boolean;
+    hasBorder?: boolean;
   }) => (
     <div
-      className={`box-border content-stretch flex h-full items-center gap-[4px] justify-center pl-0 pr-[16px] py-0 relative shrink-0 ${width} ${sortable ? "cursor-pointer hover:bg-[#6a7358] transition-colors" : ""}`}
+      className={`box-border content-stretch flex h-full items-center gap-[4px] justify-center pl-0 pr-[16px] py-0 relative shrink-0 ${width} ${sortable ? "cursor-pointer hover:bg-[#6e6e6e] transition-colors" : ""}`}
       data-name="VerticalBorder"
       onClick={() => sortable && handleSort(field)}
     >
-      <div
-        aria-hidden="true"
-        className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
-      />
+      {hasBorder && (
+        <div
+          aria-hidden="true"
+          className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
+        />
+      )}
       {sortable && (
         <SortIcon 
           direction={sortField === field ? sortDirection : "asc"} 
@@ -224,15 +233,15 @@ export function TraitsTable({ traits }: TraitsTableProps) {
   );
 
   return (
-    <div className="bg-[#a89968] relative w-full" data-name="Container">
+    <div className="bg-[#555555] relative w-fit rounded-lg overflow-hidden shrink-0" data-name="Container">
       {/* Table Header */}
       <div
-        className="bg-[#7f886a] content-stretch flex h-[46px] items-start relative shrink-0 w-full"
+        className="bg-[#555555] content-stretch flex h-[46px] items-start relative shrink-0 w-full"
         data-name="Container"
       >
         {/* Trait Header */}
         <div
-          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[200px] cursor-pointer hover:bg-[#6a7358] transition-colors"
+          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[200px] cursor-pointer hover:bg-[#6e6e6e] transition-colors"
           data-name="VerticalBorder"
           onClick={() => handleSort("name")}
         >
@@ -252,7 +261,7 @@ export function TraitsTable({ traits }: TraitsTableProps) {
         <HeaderCell field="playRate" label="Play rate" width="w-[100px]" />
         <HeaderCell field="place" label="Place" width="w-[80px]" />
         <HeaderCell field="top4" label="Top 4" width="w-[80px]" />
-        <HeaderCell field="win" label="Win" width="w-[80px]" />
+        <HeaderCell field="win" label="Win" width="w-[80px]" hasBorder={false} />
       </div>
 
       {/* Table Rows */}
@@ -269,6 +278,7 @@ export function TraitsTable({ traits }: TraitsTableProps) {
             place={trait.place}
             top4={trait.top4}
             win={trait.win}
+            index={index}
           />
         ))}
       </div>
