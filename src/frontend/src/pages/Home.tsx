@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import { ChevronRight, Database, LayoutGrid, TrendingUp } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import MainLayout from "../layouts/MainLayout";
+import { Button } from "../components/Button";
 
 export default function Home() {
   return (
@@ -20,18 +20,12 @@ export default function Home() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <Link 
-              to="/team-builder"
-              className="px-5 py-3 bg-[#858585] hover:bg-[#707070] !text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-            >
+            <Button to="/team-builder">
               Build Team <ChevronRight size={20} />
-            </Link>
-            <Link 
-              to="/"
-              className="px-5 py-3 bg-[#858585] hover:bg-[#707070] !text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-            >
+            </Button>
+            <Button to="/">
               View Meta Stats
-            </Link>
+            </Button>
           </div>
         </section>
 

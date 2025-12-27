@@ -3,8 +3,9 @@ import { HexagonalBoard } from '../components/HexagonalBoard';
 import { UnitList } from '../components/UnitList';
 import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
 import { useState, useMemo } from 'react';
-import { Trash2, Download, Upload } from 'lucide-react';
+import { Download, Upload, Trash2 } from "lucide-react";
 import { ImportModal } from "../components/ImportModal";
+import { Button } from "../components/Button";
 import { useMetadata } from '../contexts/MetadataContext';
 
 export default function TeamBuilderPage() {
@@ -202,27 +203,18 @@ export default function TeamBuilderPage() {
           <div className="space-y-4">
             {/* Action Buttons */}
             <div className="flex justify-end gap-2">
-              <button
-                onClick={handleExportCode}
-                className="px-5 py-3 bg-[#858585] hover:bg-[#707070] text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-              >
+              <Button onClick={handleExportCode}>
                 <Download size={18} />
                 Export
-              </button>
-              <button
-                onClick={handleImportCode}
-                className="px-5 py-3 bg-[#858585] hover:bg-[#707070] text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-              >
+              </Button>
+              <Button onClick={handleImportCode}>
                 <Upload size={18} />
                 Import
-              </button>
-              <button
-                onClick={handleClearBoard}
-                className="px-5 py-3 bg-[#858585] hover:bg-[#707070] text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
-              >
+              </Button>
+              <Button onClick={handleClearBoard}>
                 <Trash2 size={18} />
                 Clear
-              </button>
+              </Button>
             </div>
             
             {/* Toast Notification */}
