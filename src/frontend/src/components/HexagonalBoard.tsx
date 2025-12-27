@@ -100,7 +100,10 @@ function HexSlot({ row, col, unitName, unitImageUrl, unitCost }: HexSlotProps) {
           fill={fillColor}
           stroke={strokeColor}
           strokeWidth="2.5"
-          className="transition-colors"
+          className="transition-all duration-300"
+          style={{ 
+            filter: isOver ? 'drop-shadow(0 0 8px rgba(244, 240, 240, 0.6))' : 'none' 
+          }}
         />
       </svg>
       {/* Show draggable unit if slot is occupied */}
