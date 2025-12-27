@@ -49,7 +49,7 @@ function ItemRow({ item }: { item: Item }) {
     >
       {/* Item Icon & Name */}
       <div
-        className="box-border content-stretch flex h-full items-center pl-[14px] pr-[16px] py-0 relative shrink-0 w-[175px]"
+        className="box-border content-stretch flex h-full items-center pl-[14px] pr-[16px] py-0 relative shrink-0 w-[250px]"
         data-name="VerticalBorder"
       >
         <div
@@ -158,16 +158,16 @@ function ItemRow({ item }: { item: Item }) {
         </div>
       </div>
 
-      {/* Top Users */}
+      {/* Top Users - show max 5 */}
       <div
-        className="box-border content-stretch flex h-full items-center gap-[6px] pl-[16px] pr-0 py-0 relative shrink-0 flex-1"
+        className="box-border content-stretch flex h-full items-center gap-[4px] pl-[12px] pr-0 py-0 relative shrink-0 w-[160px]"
         data-name="VerticalBorder"
       >
         <div
           aria-hidden="true"
           className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
         />
-        {item.topUsers.map((user, index) => (
+        {item.topUsers.slice(0, 5).map((user, index) => (
           <div
             key={index}
             className="max-w-[34px] relative rounded-[4px] shrink-0 size-[26px]"
@@ -271,7 +271,7 @@ export function ItemsTable({ items }: ItemsTableProps) {
       >
         {/* Item Header */}
         <div
-          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[175px] cursor-pointer hover:bg-[#6a7358] transition-colors"
+          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[250px] cursor-pointer hover:bg-[#6a7358] transition-colors"
           data-name="VerticalBorder"
           onClick={() => handleSort("name")}
         >
@@ -300,7 +300,7 @@ export function ItemsTable({ items }: ItemsTableProps) {
 
         {/* Top Users Header (not sortable) */}
         <div
-          className="box-border content-stretch flex h-full items-center pl-[16px] pr-0 py-0 relative shrink-0 flex-1"
+          className="box-border content-stretch flex h-full items-center pl-[12px] pr-0 py-0 relative shrink-0 w-[160px]"
           data-name="VerticalBorder"
         >
           <div
