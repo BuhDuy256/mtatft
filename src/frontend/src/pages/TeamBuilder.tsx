@@ -204,21 +204,21 @@ export default function TeamBuilderPage() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleExportCode}
-                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-sm transition-colors shadow-md"
+                className="px-5 py-3 bg-[#858585] hover:bg-[#707070] text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
               >
                 <Download size={18} />
                 Export
               </button>
               <button
                 onClick={handleImportCode}
-                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-sm transition-colors shadow-md"
+                className="px-5 py-3 bg-[#858585] hover:bg-[#707070] text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
               >
                 <Upload size={18} />
                 Import
               </button>
               <button
                 onClick={handleClearBoard}
-                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-sm transition-colors shadow-md"
+                className="px-5 py-3 bg-[#858585] hover:bg-[#707070] text-white rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
               >
                 <Trash2 size={18} />
                 Clear
