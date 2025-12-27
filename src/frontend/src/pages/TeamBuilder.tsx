@@ -1,15 +1,17 @@
 import MainLayout from "../layouts/MainLayout";
 import { HexagonalBoard } from '../components/HexagonalBoard';
 import { UnitList } from '../components/UnitList';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
 import { useState, useMemo } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Download, Upload } from 'lucide-react';
 import { useMetadata } from '../contexts/MetadataContext';
 
 export default function TeamBuilderPage() {
   // Board state: Record of slot IDs to unit names
   // 4 rows x 7 cols = 28 slots
   const [boardState, setBoardState] = useState<Record<string, string | null>>({});
+  const [toastMessage, setToastMessage] = useState<string>('');
+  const [activeDragId, setActiveDragId] = useState<string | null>(null);
   
   // Get metadata for unit images
   const { data: metadata } = useMetadata();
@@ -25,9 +27,27 @@ export default function TeamBuilderPage() {
     return map;
   }, [metadata]);
 
+  // Create a map from unit name to cost
+  const unitCostMap = useMemo(() => {
+    if (!metadata) return {};
+    
+    const map: Record<string, number> = {};
+    metadata.units.forEach(unit => {
+      map[unit.name] = unit.cost;
+    });
+    return map;
+  }, [metadata]);
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveDragId(event.active.id as string);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     const dragData = active.data.current;
+
+    // Reset drag state
+    setActiveDragId(null);
 
     // Case 1: Dragging from board
     if (dragData?.fromBoard) {
@@ -72,15 +92,96 @@ export default function TeamBuilderPage() {
 
   const handleClearBoard = () => {
     setBoardState({});
+    showToast('Board cleared');
   };
+
+  const handleExportCode = async () => {
+    // Create clean JSON (exclude null values)
+    const cleanState: Record<string, string> = {};
+    Object.entries(boardState).forEach(([key, value]) => {
+      if (value !== null) {
+        cleanState[key] = value;
+      }
+    });
+
+    const jsonCode = JSON.stringify(cleanState, null, 2);
+
+    try {
+      await navigator.clipboard.writeText(jsonCode);
+      showToast('Code copied to clipboard!');
+    } catch (error) {
+      showToast('Failed to copy code');
+      console.error('Clipboard error:', error);
+    }
+  };
+
+  const handleImportCode = () => {
+    const input = window.prompt('Paste your team composition code:');
+    
+    if (!input) return;
+
+    try {
+      // Parse JSON
+      const imported = JSON.parse(input);
+
+      // Validate format
+      if (typeof imported !== 'object' || imported === null) {
+        throw new Error('Invalid format: must be an object');
+      }
+
+      // Validate slot IDs
+      const slotPattern = /^slot-[0-3]-[0-6]$/;
+      for (const key of Object.keys(imported)) {
+        if (!slotPattern.test(key)) {
+          throw new Error(`Invalid slot ID: ${key}`);
+        }
+        if (typeof imported[key] !== 'string') {
+          throw new Error(`Invalid unit name at ${key}`);
+        }
+      }
+
+      // Update board state
+      setBoardState(imported as Record<string, string>);
+      showToast('Team composition imported!');
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast(`Import failed: ${error.message}`);
+      } else {
+        showToast('Import failed: Invalid code');
+      }
+      console.error('Import error:', error);
+    }
+  };
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  // Get active drag unit info
+  const activeDragUnit = activeDragId && metadata ? metadata.units.find(u => u.name === activeDragId) : null;
 
   return (
     <MainLayout>
-      <DndContext onDragEnd={handleDragEnd}>
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 flex items-center justify-center w-full max-w-[1100px] mx-auto py-8">
           <div className="space-y-4">
-            {/* Clear Board Button */}
-            <div className="flex justify-end">
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={handleExportCode}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+              >
+                <Download size={18} />
+                Export Code
+              </button>
+              <button
+                onClick={handleImportCode}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors shadow-md"
+              >
+                <Upload size={18} />
+                Import Code
+              </button>
               <button
                 onClick={handleClearBoard}
                 className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors shadow-md"
@@ -90,9 +191,16 @@ export default function TeamBuilderPage() {
               </button>
             </div>
             
+            {/* Toast Notification */}
+            {toastMessage && (
+              <div className="fixed top-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-xl z-50 animate-fade-in">
+                {toastMessage}
+              </div>
+            )}
+            
             {/* Hexagonal Board */}
             <div className="w-full">
-              <HexagonalBoard boardState={boardState} unitImageUrlMap={unitImageUrlMap} />
+              <HexagonalBoard boardState={boardState} unitImageUrlMap={unitImageUrlMap} unitCostMap={unitCostMap} />
             </div>
             
             {/* Unit List */}
@@ -101,6 +209,50 @@ export default function TeamBuilderPage() {
             </div>
           </div>
         </div>
+        
+        {/* Drag Overlay - Hexagon shaped */}
+        <DragOverlay dropAnimation={null}>
+          {activeDragId && activeDragUnit ? (() => {
+            // Get border color based on unit cost
+            const tierColors: Record<number, string> = {
+              1: '#808080', // Gray
+              2: '#4ade80', // Green
+              3: '#60a5fa', // Blue
+              4: '#a855f7', // Purple
+              5: '#fbbf24', // Gold
+            };
+            const borderColor = tierColors[activeDragUnit.cost] || '#d4af37';
+            
+            return (
+              <div className="w-20 h-20 pointer-events-none opacity-60">
+                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl">
+                  <defs>
+                    <clipPath id="drag-hex-clip">
+                      <polygon points="50,5 93.3,27.5 93.3,72.5 50,95 6.7,72.5 6.7,27.5" />
+                    </clipPath>
+                  </defs>
+                  {/* Hexagon border */}
+                  <polygon
+                    points="50,5 93.3,27.5 93.3,72.5 50,95 6.7,72.5 6.7,27.5"
+                    fill="none"
+                    stroke={borderColor}
+                    strokeWidth="4"
+                  />
+                  {/* Champion image clipped to hexagon */}
+                  <image
+                    href={activeDragUnit.imageUrl}
+                    x="0"
+                    y="0"
+                    width="100"
+                    height="100"
+                    clipPath="url(#drag-hex-clip)"
+                    preserveAspectRatio="xMidYMid slice"
+                  />
+                </svg>
+              </div>
+            );
+          })() : null}
+        </DragOverlay>
       </DndContext>
     </MainLayout>
   );
