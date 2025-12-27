@@ -1,17 +1,24 @@
+import { useState } from "react";
 import svgPaths from "../imports/svg-4kd7dedy2x";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
-// Sort Icon (up arrow)
-function SortIcon() {
+type SortField = "name" | "playRate" | "place" | "top4" | "win";
+type SortDirection = "asc" | "desc";
+
+// Sort Icon with direction
+function SortIcon({ direction, active }: { direction: SortDirection; active: boolean }) {
+  const rotation = direction === "desc" ? "rotate-180" : "";
+  const color = active ? "#0095FF" : "#8a9a8a";
+  
   return (
-    <div className="relative shrink-0 size-[18px]" data-name="Component 1">
+    <div className={`relative shrink-0 size-[18px] transition-transform ${rotation}`} data-name="Component 1">
       <svg
         className="block size-full"
         fill="none"
         preserveAspectRatio="none"
         viewBox="0 0 18 15"
       >
-        <path d={svgPaths.p1e33b200} fill="#0095FF" />
+        <path d={svgPaths.p1e33b200} fill={color} />
       </svg>
     </div>
   );
@@ -146,7 +153,76 @@ interface TraitsTableProps {
   traits: Trait[];
 }
 
+// Helper to parse numeric value from string (handles % signs)
+function parseValue(value: string): number {
+  return parseFloat(value.replace("%", "")) || 0;
+}
+
 export function TraitsTable({ traits }: TraitsTableProps) {
+  const [sortField, setSortField] = useState<SortField>("playRate");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Toggle direction if same field
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      // New field, default to descending
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  // Sort traits based on current sort state
+  const sortedTraits = [...traits].sort((a, b) => {
+    let aVal: number | string;
+    let bVal: number | string;
+
+    if (sortField === "name") {
+      aVal = a.name.toLowerCase();
+      bVal = b.name.toLowerCase();
+      return sortDirection === "asc" 
+        ? aVal.localeCompare(bVal as string)
+        : (bVal as string).localeCompare(aVal as string);
+    } else {
+      aVal = parseValue(a[sortField]);
+      bVal = parseValue(b[sortField]);
+      return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
+    }
+  });
+
+  const HeaderCell = ({ 
+    field, 
+    label, 
+    width,
+    sortable = true 
+  }: { 
+    field: SortField; 
+    label: string; 
+    width: string;
+    sortable?: boolean;
+  }) => (
+    <div
+      className={`box-border content-stretch flex h-full items-center gap-[4px] justify-center pl-0 pr-[16px] py-0 relative shrink-0 ${width} ${sortable ? "cursor-pointer hover:bg-[#6a7358] transition-colors" : ""}`}
+      data-name="VerticalBorder"
+      onClick={() => sortable && handleSort(field)}
+    >
+      <div
+        aria-hidden="true"
+        className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
+      />
+      {sortable && (
+        <SortIcon 
+          direction={sortField === field ? sortDirection : "asc"} 
+          active={sortField === field}
+        />
+      )}
+      <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap">
+        <p className="leading-[22px] whitespace-pre">{label}</p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-[#a89968] relative w-full" data-name="Container">
       {/* Table Header */}
@@ -156,67 +232,27 @@ export function TraitsTable({ traits }: TraitsTableProps) {
       >
         {/* Trait Header */}
         <div
-          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[200px]"
+          className="box-border content-stretch flex h-full items-center pl-[16px] pr-[16px] py-0 relative shrink-0 w-[200px] cursor-pointer hover:bg-[#6a7358] transition-colors"
           data-name="VerticalBorder"
+          onClick={() => handleSort("name")}
         >
           <div
             aria-hidden="true"
             className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
           />
-          <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap">
+          <SortIcon 
+            direction={sortField === "name" ? sortDirection : "asc"} 
+            active={sortField === "name"}
+          />
+          <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap ml-1">
             <p className="leading-[22px] whitespace-pre">Trait</p>
           </div>
         </div>
 
-        {/* Play rate Header */}
-        <div
-          className="box-border content-stretch flex h-full items-center gap-[4px] justify-center pl-0 pr-[16px] py-0 relative shrink-0 w-[100px]"
-          data-name="VerticalBorder"
-        >
-          <div
-            aria-hidden="true"
-            className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
-          />
-          <SortIcon />
-          <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap">
-            <p className="leading-[22px] whitespace-pre">Play rate</p>
-          </div>
-        </div>
-
-        {/* Place Header */}
-        <div
-          className="box-border content-stretch flex h-full items-center justify-center pl-0 pr-[16px] py-0 relative shrink-0 w-[80px]"
-          data-name="VerticalBorder"
-        >
-          <div
-            aria-hidden="true"
-            className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
-          />
-          <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap">
-            <p className="leading-[22px] whitespace-pre">Place</p>
-          </div>
-        </div>
-
-        {/* Top 4 Header */}
-        <div
-          className="box-border content-stretch flex h-full items-center justify-center pl-0 pr-[16px] py-0 relative shrink-0 w-[80px]"
-          data-name="VerticalBorder"
-        >
-          <div
-            aria-hidden="true"
-            className="absolute border-[0px_2px_0px_0px] border-[rgba(0,149,255,0.08)] border-solid inset-0 pointer-events-none"
-          />
-          <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap">
-            <p className="leading-[22px] whitespace-pre">Top 4</p>
-          </div>
-        </div>
-
-        {/* Win Header */}
-        <div className="box-border content-stretch flex h-full items-center justify-center pl-0 pr-[16px] py-0 relative shrink-0 w-[80px]">
-          <div className="flex flex-col font-['Montserrat',sans-serif] justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[15px] text-nowrap">
-            <p className="leading-[22px] whitespace-pre">Win</p>
-          </div>
-        </div>
+        <HeaderCell field="playRate" label="Play rate" width="w-[100px]" />
+        <HeaderCell field="place" label="Place" width="w-[80px]" />
+        <HeaderCell field="top4" label="Top 4" width="w-[80px]" />
+        <HeaderCell field="win" label="Win" width="w-[80px]" />
       </div>
 
       {/* Table Rows */}
@@ -224,7 +260,7 @@ export function TraitsTable({ traits }: TraitsTableProps) {
         className="content-stretch flex flex-col items-start relative shrink-0 w-full"
         data-name="Container"
       >
-        {traits.map((trait, index) => (
+        {sortedTraits.map((trait, index) => (
           <TraitRow
             key={trait.id || index}
             name={trait.name}
