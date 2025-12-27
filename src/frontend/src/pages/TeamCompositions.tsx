@@ -100,9 +100,9 @@ export default function TeamCompositions() {
   return (
     <MainLayout>
       <div className="main-content flex-1 w-full max-w-[1200px] mx-auto px-4 py-8">
-        <FilterSection />
+        {/* <FilterSection /> */}
 
-        <div className="mt-6 flex flex-col items-center gap-4">
+        <div className="mt-6 flex flex-col items-center">
           {enrichedComps.map((comp) => (
             <TeamCompCard key={comp.id} comp={comp} />
           ))}
