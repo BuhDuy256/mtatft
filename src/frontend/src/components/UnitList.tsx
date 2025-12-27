@@ -1,7 +1,6 @@
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useMetadata } from '../contexts/MetadataContext';
 import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 
 interface Unit {
   id: string;
@@ -39,7 +38,7 @@ interface DraggableUnitProps {
 }
 
 function DraggableUnit({ unit, borderColor }: DraggableUnitProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: unit.name,
     data: {
       fromBoard: false,
@@ -48,9 +47,9 @@ function DraggableUnit({ unit, borderColor }: DraggableUnitProps) {
   });
 
   const style = {
-    transform: CSS.Translate.toString(transform),
+    // transform is handled by DragOverlay, so we don't apply it here to avoid double image
     zIndex: isDragging ? 999 : undefined,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.3 : 1,
   };
 
   return (

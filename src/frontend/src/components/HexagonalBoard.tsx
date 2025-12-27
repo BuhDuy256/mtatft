@@ -1,5 +1,4 @@
 import { useDroppable, useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 
 interface HexSlotProps {
   row: number;
@@ -18,7 +17,7 @@ interface DraggableHexUnitProps {
 }
 
 function DraggableHexUnit({ unitName, unitImageUrl, unitCost, slotId }: DraggableHexUnitProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `board-${slotId}`,
     data: {
       fromBoard: true,
@@ -28,9 +27,9 @@ function DraggableHexUnit({ unitName, unitImageUrl, unitCost, slotId }: Draggabl
   });
 
   const style = {
-    transform: CSS.Translate.toString(transform),
+    // transform is handled by DragOverlay, so we don't apply it here to avoid double image
     zIndex: isDragging ? 999 : 10,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0 : 1,
   };
 
   // Get border color based on unit cost
