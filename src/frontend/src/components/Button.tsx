@@ -9,7 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({ children, to, className = "", ...props }: ButtonProps) {
   const baseClasses = 
-    "px-5 py-3 bg-[#858585] hover:bg-[#707070] !text-white rounded-sm font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
+    "px-5 py-3 bg-[#858585] hover:bg-[#707070] !text-white rounded-sm font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
 
   const combinedClasses = `${baseClasses} ${className}`;
 
