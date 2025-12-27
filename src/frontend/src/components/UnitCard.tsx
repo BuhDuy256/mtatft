@@ -45,7 +45,7 @@ export function UnitCard({ unit }: UnitCardProps) {
 
       {/* Info Container */}
       <div
-        className="box-border content-stretch flex flex-col h-[60px] items-end overflow-clip pl-[9px] pr-[3px] py-[7px] relative shrink-0 z-[1]"
+        className="box-border content-stretch flex flex-col h-[60px] items-end overflow-hidden pl-[9px] pr-[3px] py-[7px] relative shrink-0 w-[80px] z-[1]"
         data-name="Container"
       >
         {/* Champion Name */}
@@ -63,7 +63,7 @@ export function UnitCard({ unit }: UnitCardProps) {
                 { fontVariationSettings: "'wdth' 100" } as React.CSSProperties
               }
             >
-              <p className="leading-[24px]">{unit.name}</p>
+              <p className="leading-[24px] truncate">{unit.name}</p>
             </div>
           </div>
         </div>

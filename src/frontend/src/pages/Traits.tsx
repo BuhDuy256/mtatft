@@ -3,6 +3,7 @@ import { useMetadata } from "../contexts/MetadataContext";
 import { useTraitStats } from "../hooks/useTraitStats";
 import { TraitsTable } from "../components/TraitsTable";
 import MainLayout from "../layouts/MainLayout";
+import { formatNumber, formatPercent } from "../utils/format";
 
 export default function Traits() {
   const { data: metadata } = useMetadata();
@@ -20,10 +21,10 @@ export default function Traits() {
         id: trait.id,
         name: traitDetail?.name || trait.name,
         icon: traitDetail?.imageUrl || trait.icon,
-        playRate: trait.stats?.playRate?.toFixed(2) || "0.00",
-        place: trait.stats?.avgPlace?.toFixed(2) || "0.00",
-        top4: `${(trait.stats?.top4Rate || 0).toFixed(1)}%`,
-        win: `${(trait.stats?.winRate || 0).toFixed(1)}%`,
+        playRate: formatNumber(trait.stats?.playRate),
+        place: formatNumber(trait.stats?.avgPlace),
+        top4: formatPercent(trait.stats?.top4Rate),
+        win: formatPercent(trait.stats?.winRate),
       };
     });
   }, [rawTraits, metadata]);

@@ -4,6 +4,7 @@ import { useTopComps } from "../hooks/useTopComps";
 import { FilterSection } from "../components/FilterSection";
 import { TeamCompCard } from "../components/TeamCompCard";
 import MainLayout from "../layouts/MainLayout";
+import { formatNumber } from "../utils/format";
 
 const getCostBorderColor = (cost: number): string => {
   const colors: Record<number, string> = {
@@ -54,10 +55,10 @@ export default function TeamCompositions() {
         };
       }),
       stats: {
-        playRate: comp.stats?.playRate?.toFixed(1) || "0.0",
-        avgPlace: comp.stats?.avgPlace?.toFixed(2) || "0.00",
-        top4: comp.stats?.top4Rate?.toFixed(1) || "0.0",
-        winRate: comp.stats?.winRate?.toFixed(1) || "0.0",
+        playRate: formatNumber(comp.stats?.playRate),
+        avgPlace: formatNumber(comp.stats?.avgPlace),
+        top4: formatNumber(comp.stats?.top4Rate),
+        winRate: formatNumber(comp.stats?.winRate),
       },
     }));
   }, [rawComps, metadata]);

@@ -4,6 +4,7 @@ import { useItemStats } from "../hooks/useItemStats";
 import { ItemsFilter } from "../components/ItemsFilter";
 import { ItemsTable } from "../components/ItemsTable";
 import MainLayout from "../layouts/MainLayout";
+import { formatNumber, formatPercent } from "../utils/format";
 
 export default function Items() {
   const { data: metadata } = useMetadata();
@@ -33,10 +34,10 @@ export default function Items() {
         id: item.id,
         name: itemDetail?.name || item.name,
         icon: itemDetail?.imageUrl || item.icon,
-        playRate: item.stats?.playRate?.toFixed(2) || "0.00",
-        place: item.stats?.avgPlace?.toFixed(2) || "0.00",
-        top4: `${(item.stats?.top4Rate || 0).toFixed(1)}%`,
-        win: `${(item.stats?.winRate || 0).toFixed(1)}%`,
+        playRate: formatNumber(item.stats?.playRate),
+        place: formatNumber(item.stats?.avgPlace),
+        top4: formatPercent(item.stats?.top4Rate),
+        win: formatPercent(item.stats?.winRate),
         topUsers: enrichedTopUsers,
       };
     });
