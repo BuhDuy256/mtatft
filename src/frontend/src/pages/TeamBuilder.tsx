@@ -12,6 +12,7 @@ export default function TeamBuilderPage() {
   const [boardState, setBoardState] = useState<Record<string, string | null>>({});
   const [toastMessage, setToastMessage] = useState<string>('');
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const [activeUnitName, setActiveUnitName] = useState<string | null>(null);
   
   // Get metadata for unit images
   const { data: metadata } = useMetadata();
@@ -40,6 +41,13 @@ export default function TeamBuilderPage() {
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveDragId(event.active.id as string);
+    // Get unit name from data (works for both list and board)
+    if (event.active.data.current?.unitName) {
+      setActiveUnitName(event.active.data.current.unitName);
+    } else {
+      // Fallback to ID for unit list
+      setActiveUnitName(event.active.id as string);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -48,6 +56,7 @@ export default function TeamBuilderPage() {
 
     // Reset drag state
     setActiveDragId(null);
+    setActiveUnitName(null);
 
     // Case 1: Dragging from board
     if (dragData?.fromBoard) {
@@ -158,8 +167,8 @@ export default function TeamBuilderPage() {
     setTimeout(() => setToastMessage(''), 3000);
   };
 
-  // Get active drag unit info
-  const activeDragUnit = activeDragId && metadata ? metadata.units.find(u => u.name === activeDragId) : null;
+  // Get active drag unit info using explicitly tracked unit name
+  const activeDragUnit = activeUnitName && metadata ? metadata.units.find(u => u.name === activeUnitName) : null;
 
   return (
     <MainLayout>
