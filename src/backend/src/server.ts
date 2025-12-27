@@ -1,10 +1,10 @@
 import express from "express";
 import cors from 'cors';
-import { envConfig } from "./config/env.config";
+import { envConfig } from "./configs/env.config";
 
 import metadataRouter from "./api/routes/metadata.routes";
 import statsRouter from "./api/routes/stats.routes";
-import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
+import { errorHandler, notFoundHandler } from "./api/middlewares/error.middleware";
 
 const app = express();
 const PORT = envConfig.PORT;

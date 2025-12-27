@@ -18,7 +18,7 @@ export interface ItemMetadata {
   imageUrl: string;
 }
 
-export interface Metadata {
+export interface MetadataResponse {
   season: number;
   units: UnitMetadata[];
   traits: TraitMetadata[];

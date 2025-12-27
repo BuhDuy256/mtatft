@@ -68,9 +68,9 @@ export default function Units() {
         id: unit.id, // Use string ID directly to avoid duplicate keys
         name: unitDetail?.name || unit.name,
         cost: unitDetail?.cost || 1,
-        imageUrl: unitDetail?.image_url || unit.icon,
-        avgPlace: unit.stats?.avg_place || 0,
-        playRate: unit.stats?.play_rate || 0,
+        imageUrl: unitDetail?.imageUrl || unit.icon,
+        avgPlace: unit.stats?.avgPlace || 0,
+        playRate: unit.stats?.playRate || 0,
       };
     });
 

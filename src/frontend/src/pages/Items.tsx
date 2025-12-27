@@ -53,7 +53,7 @@ export default function Items() {
         (m) => m.id.toLowerCase() === item.id.toLowerCase()
       );
 
-      // Enrich top users with unit metadata (only image_url)
+      // Enrich top users with unit metadata (only imageUrl)
       const enrichedTopUsers = (item.topUsers || []).map((user) => {
         const userDetail = metadata.units.find(
           (m) => m.id.toLowerCase() === user.id.toLowerCase()
@@ -61,18 +61,18 @@ export default function Items() {
         return {
           id: user.id,
           name: userDetail?.name || user.name,
-          imageUrl: userDetail?.image_url || "",
+          imageUrl: userDetail?.imageUrl || "",
         };
       });
 
       return {
         id: item.id,
         name: itemDetail?.name || item.name,
-        icon: itemDetail?.image_url || item.icon,
-        playRate: item.stats?.play_rate?.toFixed(2) || "0.00",
-        place: item.stats?.avg_place?.toFixed(2) || "0.00",
-        top4: `${(item.stats?.top4_rate || 0).toFixed(1)}%`,
-        win: `${(item.stats?.win_rate || 0).toFixed(1)}%`,
+        icon: itemDetail?.imageUrl || item.icon,
+        playRate: item.stats?.playRate?.toFixed(2) || "0.00",
+        place: item.stats?.avgPlace?.toFixed(2) || "0.00",
+        top4: `${(item.stats?.top4Rate || 0).toFixed(1)}%`,
+        win: `${(item.stats?.winRate || 0).toFixed(1)}%`,
         topUsers: enrichedTopUsers,
       };
     });

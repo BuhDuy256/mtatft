@@ -55,11 +55,11 @@ export default function Traits() {
       return {
         id: trait.id,
         name: traitDetail?.name || trait.name,
-        icon: traitDetail?.image_url || trait.icon,
-        playRate: trait.stats?.play_rate?.toFixed(2) || "0.00",
-        place: trait.stats?.avg_place?.toFixed(2) || "0.00",
-        top4: `${(trait.stats?.top4_rate || 0).toFixed(1)}%`,
-        win: `${(trait.stats?.win_rate || 0).toFixed(1)}%`,
+        icon: traitDetail?.imageUrl || trait.icon,
+        playRate: trait.stats?.playRate?.toFixed(2) || "0.00",
+        place: trait.stats?.avgPlace?.toFixed(2) || "0.00",
+        top4: `${(trait.stats?.top4Rate || 0).toFixed(1)}%`,
+        win: `${(trait.stats?.winRate || 0).toFixed(1)}%`,
       };
     });
   }, [rawTraits, metadata]);

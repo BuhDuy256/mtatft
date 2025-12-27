@@ -1,19 +1,22 @@
-import { MetadataQuery } from "../api/schemas/metadata.schema";
+import { MetadataQueryDto } from '../api/dtos/requests/metadata.schema';
+import { MetadataResponse, UnitMetadata } from '../api/dtos/responses/metadata.type';
 
-import { Metadata, ItemMetadata, TraitMetadata, UnitMetadata } from "../types/metadata.type";
+import { getAllItems } from '../repositories/item.repository';
+import { getAllTraits } from '../repositories/trait.repository';
+import { getAllUnitsWithTraits } from '../repositories/unit.repository';
 
-import { getAllItems } from "../repositories/item.repository";
-import { getAllTraits } from "../repositories/trait.repository";
-import { getAllUnitsWithTraits } from "../repositories/unit.repository";
+import { mapTraitToMetadata, mapItemToMetadata, mapMetadataResponse } from '../mappers/metadata.mapper';
 
-export const getMetadata = async (query: MetadataQuery): Promise<Metadata> => {
+export const getMetadata = async (query: MetadataQueryDto): Promise<MetadataResponse> => {
   const { season } = query;
+  
   const [items, traits, unitsWithTraits] = await Promise.all([
     getAllItems(season),
     getAllTraits(season),
     getAllUnitsWithTraits(season)
   ]);
 
+  // Build units map with traits
   const unitsMap = new Map<string, UnitMetadata>();
 
   for (const row of unitsWithTraits) {
@@ -23,7 +26,7 @@ export const getMetadata = async (query: MetadataQuery): Promise<Metadata> => {
         name: row.name,
         cost: row.cost,
         traits: [],
-        image_url: row.iconUrl
+        imageUrl: row.iconUrl
       });
     }
 
@@ -32,22 +35,10 @@ export const getMetadata = async (query: MetadataQuery): Promise<Metadata> => {
     }
   }
 
-  const formattedTraits: TraitMetadata[] = traits.map((trait: any) => ({
-    id: trait.id,
-    name: trait.name,
-    image_url: trait.iconUrl
-  }));
+  // Use mappers to transform data to camelCase
+  const formattedTraits = traits.map(mapTraitToMetadata);
+  const formattedItems = items.map(mapItemToMetadata);
+  const units = Array.from(unitsMap.values());
 
-  const formattedItems: ItemMetadata[] = items.map((item: any) => ({
-    id: item.id,
-    name: item.name,
-    image_url: item.iconUrl
-  }));
-
-  return {
-    season: season,
-    units: Array.from(unitsMap.values()),
-    traits: formattedTraits,
-    items: formattedItems
-  }
-}
+  return mapMetadataResponse(season, units, formattedTraits, formattedItems);
+};

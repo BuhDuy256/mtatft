@@ -68,7 +68,7 @@ export default function TeamCompositions() {
           name: detail?.name || u.name,
           stars: 2,
           items: [],
-          imageUrl: detail?.image_url || "",
+          imageUrl: detail?.imageUrl || "",
           borderColor: getCostBorderColor(detail?.cost || 0),
         };
       }),
@@ -81,15 +81,15 @@ export default function TeamCompositions() {
           name: detail?.name || u.name,
           stars: 2,
           items: [],
-          imageUrl: detail?.image_url || "",
+          imageUrl: detail?.imageUrl || "",
           borderColor: getCostBorderColor(detail?.cost || 0),
         };
       }),
       stats: {
-        playRate: comp.stats?.play_rate?.toFixed(1) || "0.0",
-        avgPlace: comp.stats?.avg_place?.toFixed(2) || "0.00",
-        top4: comp.stats?.top4_rate?.toFixed(1) || "0.0",
-        winRate: comp.stats?.win_rate?.toFixed(1) || "0.0",
+        playRate: comp.stats?.playRate?.toFixed(1) || "0.0",
+        avgPlace: comp.stats?.avgPlace?.toFixed(2) || "0.00",
+        top4: comp.stats?.top4Rate?.toFixed(1) || "0.0",
+        winRate: comp.stats?.winRate?.toFixed(1) || "0.0",
       },
     }));
   }, [rawComps, metadata]);

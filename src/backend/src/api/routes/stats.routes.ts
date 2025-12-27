@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { validate } from '../../middlewares/validate.middleware';
+import { validate } from '../middlewares/validate.middleware';
 import * as StatsController from '../controllers/stats.controller';
-import { statsQuerySchema } from '../schemas/stats.schema';
+import { statsQuerySchema } from '../dtos/requests/stats.schema';
 
 const router = Router();
 
