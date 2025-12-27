@@ -1,4 +1,3 @@
-import svgPaths from "../imports/svg-1j0m78qahy";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 interface Champion {
@@ -62,28 +61,12 @@ export function TeamCompCard({ comp }: TeamCompCardProps) {
           {/* Left Section - Team Info and Champions */}
           <div className="flex flex-row items-center self-stretch">
             <div className="box-border content-stretch flex flex-col h-full items-start pl-0 pr-[6px] py-[16px] relative shrink-0">
-              {/* Header with Team Name and Icons */}
+              {/* Header with Team Name */}
               <div className="content-stretch flex gap-[89.53px] items-end relative shrink-0 w-[448px]">
                 <div className="content-stretch flex h-[30px] items-center relative shrink-0">
                   <div className="content-stretch flex items-center relative shrink-0">
-                    {/* Trait Icon */}
-                    <div className="content-stretch flex flex-col items-start max-w-[294.47px] overflow-clip relative shrink-0 w-[22px]">
-                      <div className="content-stretch flex flex-col items-center justify-center overflow-clip relative shrink-0 size-[22px]">
-                        <div className="relative shrink-0 size-[22px]">
-                          <svg
-                            className="block size-full"
-                            fill="none"
-                            preserveAspectRatio="none"
-                            viewBox="0 0 22 22"
-                          >
-                            <path d={svgPaths.p8d4c480} fill="white" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-
                     {/* Team Name */}
-                    <div className="box-border content-stretch flex flex-col items-start pl-[4px] pr-0 py-0 relative shrink-0">
+                    <div className="box-border content-stretch flex flex-col items-start relative shrink-0">
                       <div className="flex flex-col font-['Montserrat',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[18px] text-nowrap">
                         <p className="leading-[28px] whitespace-pre">
                           {comp.name}
@@ -133,35 +116,45 @@ export function TeamCompCard({ comp }: TeamCompCardProps) {
 
               {/* Core/Flex Dividers */}
               <div className="box-border content-stretch flex items-start pb-0 pt-[4px] px-0 relative shrink-0 w-full">
-                {/* Core Divider */}
-                <div className="content-stretch flex items-center relative self-stretch shrink-0 w-[218px]">
-                  <div className="basis-0 bg-white grow h-px min-h-px min-w-px shrink-0" />
-                  <div className="box-border content-stretch flex flex-col items-start px-[5px] py-0 relative shrink-0">
-                    <div
-                      className="flex flex-col font-['Roboto',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[14px] text-nowrap"
-                      style={{ fontVariationSettings: "'wdth' 100" }}
-                    >
-                      <p className="leading-[16px] whitespace-pre">Core</p>
-                    </div>
-                  </div>
-                  <div className="basis-0 bg-white grow h-px min-h-px min-w-px shrink-0" />
-                </div>
-
-                {/* Flex Divider */}
-                <div className="box-border content-stretch flex flex-col items-start justify-center pl-[12px] pr-0 py-0 relative self-stretch shrink-0 w-[230px]">
-                  <div className="content-stretch flex h-[16px] items-center relative shrink-0 w-[218px]">
+                {/* Core Divider - width based on core champions count */}
+                {comp.coreChampions.length > 0 && (
+                  <div 
+                    className="content-stretch flex items-center relative self-stretch shrink-0"
+                    style={{ width: `${comp.coreChampions.length * 57}px` }}
+                  >
                     <div className="basis-0 bg-white grow h-px min-h-px min-w-px shrink-0" />
                     <div className="box-border content-stretch flex flex-col items-start px-[5px] py-0 relative shrink-0">
                       <div
                         className="flex flex-col font-['Roboto',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[14px] text-nowrap"
                         style={{ fontVariationSettings: "'wdth' 100" }}
                       >
-                        <p className="leading-[16px] whitespace-pre">Flex</p>
+                        <p className="leading-[16px] whitespace-pre">Core</p>
                       </div>
                     </div>
                     <div className="basis-0 bg-white grow h-px min-h-px min-w-px shrink-0" />
                   </div>
-                </div>
+                )}
+
+                {/* Flex Divider - width based on flex champions count */}
+                {comp.flexChampions.length > 0 && (
+                  <div 
+                    className="box-border content-stretch flex flex-col items-start justify-center pl-[12px] pr-0 py-0 relative self-stretch shrink-0"
+                    style={{ width: `${comp.flexChampions.length * 57 + 12}px` }}
+                  >
+                    <div className="content-stretch flex h-[16px] items-center relative shrink-0 w-full">
+                      <div className="basis-0 bg-white grow h-px min-h-px min-w-px shrink-0" />
+                      <div className="box-border content-stretch flex flex-col items-start px-[5px] py-0 relative shrink-0">
+                        <div
+                          className="flex flex-col font-['Roboto',sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[#eaf6ff] text-[14px] text-nowrap"
+                          style={{ fontVariationSettings: "'wdth' 100" }}
+                        >
+                          <p className="leading-[16px] whitespace-pre">Flex</p>
+                        </div>
+                      </div>
+                      <div className="basis-0 bg-white grow h-px min-h-px min-w-px shrink-0" />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Champions */}
