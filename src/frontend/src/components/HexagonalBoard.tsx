@@ -84,8 +84,9 @@ function HexSlot({ row, col, unitName, unitImageUrl, unitCost }: HexSlotProps) {
     id: slotId,
   });
 
-  // Determine fill color based on state
-  const fillColor = isOver ? '#5a4f3a' : '#3d3526';
+  // Determine fill color (always black) and border (lights up when over)
+  const fillColor = '#000000';
+  const strokeColor = isOver ? '#f4f0f0ff' : 'transparent';
 
   return (
     <div
@@ -97,7 +98,7 @@ function HexSlot({ row, col, unitName, unitImageUrl, unitCost }: HexSlotProps) {
         <polygon
           points="50,5 93.3,27.5 93.3,72.5 50,95 6.7,72.5 6.7,27.5"
           fill={fillColor}
-          // stroke="#6b5d3f"
+          stroke={strokeColor}
           strokeWidth="2.5"
           className="transition-colors"
         />
