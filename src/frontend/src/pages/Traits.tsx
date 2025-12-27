@@ -1,48 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useMetadata } from "../contexts/MetadataContext";
+import { useTraitStats } from "../hooks/useTraitStats";
 import { TraitsTable } from "../components/TraitsTable";
 import MainLayout from "../layouts/MainLayout";
-import { fetchTraitStats } from "../services/stats.service";
-import type { TraitStat } from "../types/stats";
 
 export default function Traits() {
   const { data: metadata } = useMetadata();
-  const [rawTraits, setRawTraits] = useState<TraitStat[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadTraitStats() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetchTraitStats();
-
-        console.log("Trait Stats API Response:", response);
-
-        if (
-          response &&
-          response.traitStats &&
-          Array.isArray(response.traitStats)
-        ) {
-          setRawTraits(response.traitStats);
-        } else {
-          console.warn("Invalid response structure:", response);
-          setRawTraits([]);
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to load trait stats";
-        setError(errorMessage);
-        console.error("Error loading trait stats:", err);
-        setRawTraits([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadTraitStats();
-  }, []);
+  const { rawTraits, isLoading, error } = useTraitStats();
 
   const enrichedTraits = useMemo(() => {
     if (!metadata || !rawTraits || rawTraits.length === 0) return [];

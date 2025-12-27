@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useMetadata } from "../contexts/MetadataContext";
+import { useUnitStats } from "../hooks/useUnitStats";
 import { TierSection } from "../components/TierSection";
 import MainLayout from "../layouts/MainLayout";
-import { fetchUnitStats } from "../services/stats.service";
-import type { UnitStat } from "../types/stats";
 
 const getTierBackgroundColor = (cost: number): string => {
   const colors: Record<number, string> = {
@@ -18,42 +17,7 @@ const getTierBackgroundColor = (cost: number): string => {
 
 export default function Units() {
   const { data: metadata } = useMetadata();
-  const [rawUnits, setRawUnits] = useState<UnitStat[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadUnitStats() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetchUnitStats();
-
-        console.log("Unit Stats API Response:", response);
-
-        if (
-          response &&
-          response.unitStats &&
-          Array.isArray(response.unitStats)
-        ) {
-          setRawUnits(response.unitStats);
-        } else {
-          console.warn("Invalid response structure:", response);
-          setRawUnits([]);
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to load unit stats";
-        setError(errorMessage);
-        console.error("Error loading unit stats:", err);
-        setRawUnits([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadUnitStats();
-  }, []);
+  const { rawUnits, isLoading, error } = useUnitStats();
 
   const tierData = useMemo(() => {
     if (!metadata || !rawUnits || rawUnits.length === 0) return [];
@@ -65,7 +29,7 @@ export default function Units() {
       );
 
       return {
-        id: unit.id, // Use string ID directly to avoid duplicate keys
+        id: unit.id,
         name: unitDetail?.name || unit.name,
         cost: unitDetail?.cost || 1,
         imageUrl: unitDetail?.imageUrl || unit.icon,
@@ -75,7 +39,7 @@ export default function Units() {
     });
 
     // Group by cost (tier)
-    const groupedByCost: Record<number, any[]> = {};
+    const groupedByCost: Record<number, typeof enrichedUnits> = {};
     enrichedUnits.forEach((unit) => {
       if (!groupedByCost[unit.cost]) {
         groupedByCost[unit.cost] = [];
@@ -89,9 +53,9 @@ export default function Units() {
         tier: parseInt(cost),
         name: `Tier ${cost}`,
         backgroundColor: getTierBackgroundColor(parseInt(cost)),
-        units: units.sort((a, b) => a.avgPlace - b.avgPlace), // Sort by avg place
+        units: units.sort((a, b) => a.avgPlace - b.avgPlace),
       }))
-      .sort((a, b) => a.tier - b.tier); // Sort tiers 1-5
+      .sort((a, b) => a.tier - b.tier);
   }, [rawUnits, metadata]);
 
   if (isLoading) {

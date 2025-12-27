@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useMetadata } from "../contexts/MetadataContext";
+import { useTopComps } from "../hooks/useTopComps";
 import { FilterSection } from "../components/FilterSection";
 import { TeamCompCard } from "../components/TeamCompCard";
 import MainLayout from "../layouts/MainLayout";
-import { fetchTopComps } from "../services/stats.service";
-import type { TopComp } from "../types/stats";
 
 const getCostBorderColor = (cost: number): string => {
   const colors: Record<number, string> = {
@@ -19,38 +18,7 @@ const getCostBorderColor = (cost: number): string => {
 
 export default function TeamCompositions() {
   const { data: metadata } = useMetadata();
-  const [rawComps, setRawComps] = useState<TopComp[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadTopComps() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetchTopComps();
-
-        console.log("API Response:", response);
-
-        if (response && response.topComps && Array.isArray(response.topComps)) {
-          setRawComps(response.topComps);
-        } else {
-          console.warn("Invalid response structure:", response);
-          setRawComps([]);
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to load top comps";
-        setError(errorMessage);
-        console.error("Error loading top comps:", err);
-        setRawComps([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadTopComps();
-  }, []);
+  const { rawComps, isLoading, error } = useTopComps();
 
   const enrichedComps = useMemo(() => {
     if (!metadata || !rawComps || rawComps.length === 0) return [];

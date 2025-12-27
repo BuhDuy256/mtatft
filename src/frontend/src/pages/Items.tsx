@@ -1,49 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useMetadata } from "../contexts/MetadataContext";
+import { useItemStats } from "../hooks/useItemStats";
 import { ItemsFilter } from "../components/ItemsFilter";
 import { ItemsTable } from "../components/ItemsTable";
 import MainLayout from "../layouts/MainLayout";
-import { fetchItemStats } from "../services/stats.service";
-import type { ItemStat } from "../types/stats";
 
 export default function Items() {
   const { data: metadata } = useMetadata();
-  const [rawItems, setRawItems] = useState<ItemStat[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadItemStats() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetchItemStats();
-
-        console.log("Item Stats API Response:", response);
-
-        if (
-          response &&
-          response.itemStats &&
-          Array.isArray(response.itemStats)
-        ) {
-          setRawItems(response.itemStats);
-        } else {
-          console.warn("Invalid response structure:", response);
-          setRawItems([]);
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to load item stats";
-        setError(errorMessage);
-        console.error("Error loading item stats:", err);
-        setRawItems([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadItemStats();
-  }, []);
+  const { rawItems, isLoading, error } = useItemStats();
 
   const enrichedItems = useMemo(() => {
     if (!metadata || !rawItems || rawItems.length === 0) return [];
