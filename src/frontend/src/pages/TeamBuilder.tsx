@@ -4,6 +4,7 @@ import { UnitList } from '../components/UnitList';
 import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
 import { useState, useMemo } from 'react';
 import { Trash2, Download, Upload } from 'lucide-react';
+import { ImportModal } from "../components/ImportModal";
 import { useMetadata } from '../contexts/MetadataContext';
 
 export default function TeamBuilderPage() {
@@ -11,6 +12,7 @@ export default function TeamBuilderPage() {
   // 4 rows x 7 cols = 28 slots
   const [boardState, setBoardState] = useState<Record<string, string | null>>({});
   const [toastMessage, setToastMessage] = useState<string>('');
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [activeUnitName, setActiveUnitName] = useState<string | null>(null);
   
@@ -117,9 +119,10 @@ export default function TeamBuilderPage() {
     });
 
     const jsonCode = JSON.stringify(cleanState, null, 2);
+    const encodedCode = btoa(jsonCode); // Base64 encode
 
     try {
-      await navigator.clipboard.writeText(jsonCode);
+      await navigator.clipboard.writeText(encodedCode);
       showToast('Code copied to clipboard!');
     } catch (error) {
       showToast('Failed to copy code');
@@ -127,14 +130,16 @@ export default function TeamBuilderPage() {
     }
   };
 
+  // Open modal instead of prompt
   const handleImportCode = () => {
-    const input = window.prompt('Paste your team composition code:');
-    
-    if (!input) return;
+    setIsImportModalOpen(true);
+  };
 
+  // Handle actual import from modal
+  const handleConfirmImport = (jsonString: string) => {
     try {
-      // Parse JSON
-      const imported = JSON.parse(input);
+      const decoded = atob(jsonString); // Base64 decode
+      const imported = JSON.parse(decoded);
 
       // Validate format
       if (typeof imported !== 'object' || imported === null) {
@@ -171,6 +176,7 @@ export default function TeamBuilderPage() {
       // Update board state
       setBoardState(newState);
       showToast('Team composition imported!');
+      setIsImportModalOpen(false); // Close modal on successful import
     } catch (error) {
       if (error instanceof Error) {
         showToast(`Import failed: ${error.message}`);
@@ -198,24 +204,24 @@ export default function TeamBuilderPage() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleExportCode}
-                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-lg transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-sm transition-colors shadow-md"
               >
                 <Download size={18} />
-                Export Code
+                Export
               </button>
               <button
                 onClick={handleImportCode}
-                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-lg transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-sm transition-colors shadow-md"
               >
                 <Upload size={18} />
-                Import Code
+                Import
               </button>
               <button
                 onClick={handleClearBoard}
-                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-lg transition-colors shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-[#858585] hover:bg-[#707070] text-white rounded-sm transition-colors shadow-md"
               >
                 <Trash2 size={18} />
-                Clear Board
+                Clear
               </button>
             </div>
             
@@ -281,6 +287,13 @@ export default function TeamBuilderPage() {
             );
           })() : null}
         </DragOverlay>
+
+        {/* Import Modal */}
+        <ImportModal 
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+          onImport={handleConfirmImport}
+        />
       </DndContext>
     </MainLayout>
   );
