@@ -67,32 +67,26 @@ This project was developed as part of the **Introduction to Software Engineering
 ### Home Page
 
 ![Home Page](docs/images/home_page.png)
-_Welcome to MtaTFT - Your comprehensive TFT analytics platform_
 
 ### Top Team Compositions
 
 ![Top Compositions](docs/images/top_comps.png)
-_Analyze the most successful team compositions in the current meta_
 
 ### Team Builder
 
 ![Team Builder](docs/images/team_builder.png)
-_Interactive drag-and-drop team builder with real-time synergy calculations_
 
 ### Trait Analytics
 
 ![Traits](docs/images/traits.png)
-_Comprehensive trait statistics and performance metrics_
 
 ### Unit Statistics
 
 ![Units](docs/images/units.png)
-_Detailed unit performance data with advanced filtering_
 
 ### Item Analysis
 
 ![Items](docs/images/items.png)
-_Track item effectiveness and optimal item holders_
 
 ---
 
